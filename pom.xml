@@ -250,14 +250,6 @@ scm:git:http://${safehaus.git.username}@stash.safehaus.org/scm/AOK/embedded-jett
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-log4j12</artifactId>
     </dependency>
-
-    <!-- Test Related Dependencies -->
-
-    <dependency>
-      <groupId>org.jukito</groupId>
-      <artifactId>jukito</artifactId>
-      <scope>test</scope>
-    </dependency>
   </dependencies>
 
 </project>
