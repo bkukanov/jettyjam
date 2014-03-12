@@ -87,8 +87,8 @@
           </descriptorRefs>
           <archive>
             <manifest>
-              <mainClass>org.safehaus.chop.webapp.Launcher</mainClass>
-              <packageName>org.safehaus.chop.webapp</packageName>
+              <mainClass>org.safehaus.embedded.jetty.utils.Launcher</mainClass>
+              <packageName>org.safehaus.embedded.jetty.simple</packageName>
             </manifest>
             <manifestEntries>
               <mode>development</mode>
@@ -104,8 +104,8 @@
         <configuration>
           <archive>
             <manifest>
-              <mainClass>org.safehaus.chop.webapp.Launcher</mainClass>
-              <packageName>org.safehaus.chop.webapp</packageName>
+              <mainClass>org.safehaus.embedded.jetty.utils.Launcher</mainClass>
+              <packageName>org.safehaus.embedded.jetty</packageName>
             </manifest>
             <manifestEntries>
               <mode>development</mode>
@@ -120,6 +120,12 @@
 
   <dependencies>
     <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>embedded-jetty-utils</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
       <groupId>org.eclipse.jetty</groupId>
       <artifactId>jetty-servlet</artifactId>
     </dependency>
@@ -132,6 +138,11 @@
     <dependency>
       <groupId>org.eclipse.jetty</groupId>
       <artifactId>jetty-webapp</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>com.sun.jersey</groupId>
+      <artifactId>jersey-client</artifactId>
     </dependency>
 
     <!-- Test Dependencies -->

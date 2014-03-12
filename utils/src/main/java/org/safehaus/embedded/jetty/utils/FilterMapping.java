@@ -1,4 +1,4 @@
-package org.safehaus.embedded.jetty.simple;
+package org.safehaus.embedded.jetty.utils;
 
 
 import java.lang.annotation.ElementType;
@@ -14,7 +14,7 @@ import javax.servlet.Filter;
  * A filter mapping.
  */
 @Retention( RetentionPolicy.RUNTIME )
-@Target( ElementType.FIELD )
+@Target( { ElementType.FIELD, ElementType.TYPE } )
 @Inherited
 public @interface FilterMapping {
     Class<? extends Filter> filter();

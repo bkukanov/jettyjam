@@ -58,9 +58,11 @@ scm:git:http://${safehaus.git.username}@stash.safehaus.org/scm/AOK/embedded-jett
     <log4j.version>1.2.17</log4j.version>
     <slf4j.version>1.6.1</slf4j.version>
     <vaadin.version>7.1.11</vaadin.version>
+    <reflections.version>0.9.9-RC1</reflections.version>
   </properties>
 
   <modules>
+    <module>utils</module>
     <module>simple-servlet</module>
   </modules>
 
@@ -196,6 +198,12 @@ scm:git:http://${safehaus.git.username}@stash.safehaus.org/scm/AOK/embedded-jett
         <groupId>com.google.inject.extensions</groupId>
         <artifactId>guice-servlet</artifactId>
         <version>${guice.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.reflections</groupId>
+        <artifactId>reflections</artifactId>
+        <version>${reflections.version}</version>
       </dependency>
 
       <dependency>

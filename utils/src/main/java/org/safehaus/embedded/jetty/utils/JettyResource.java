@@ -1,4 +1,4 @@
-package org.safehaus.embedded.jetty.simple;
+package org.safehaus.embedded.jetty.utils;
 
 
 import java.net.URL;
@@ -70,7 +70,7 @@ public class JettyResource implements TestRule {
 
     @Override
     public Statement apply( Statement base, Description description ) {
-        JettyBuilder builder = new JettyBuilder();
+        HandlerBuilder builder = new HandlerBuilder();
         server.setHandler( builder.build( description.getTestClass() ) );
         return statement( base );
     }

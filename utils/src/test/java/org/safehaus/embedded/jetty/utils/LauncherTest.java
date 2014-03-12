@@ -1,8 +1,27 @@
-package java.org.safehaus.embedded.jetty.utils;
+package org.safehaus.embedded.jetty.utils;
 
 
 /**
- * Created with IntelliJ IDEA. User: akarasulu Date: 3/11/14 Time: 4:47 PM To change this template use File | Settings |
- * File Templates.
+ * Tests the Launcher functionality.
  */
-public class LauncherTest {}
+@JettyHandlers(
+    servletMappings = { @ServletMapping( servlet = HelloWorldServlet.class, spec = "/*" ) },
+    filterMappings = {}
+)
+public class LauncherTest extends Launcher {
+
+    protected LauncherTest() {
+        super( 0 );
+    }
+
+
+    @Override
+    public String getPackageBase() {
+        return getClass().getPackage().getName();
+    }
+
+
+    public static void main( String [] args ) throws Exception {
+        new LauncherTest().start();
+    }
+}

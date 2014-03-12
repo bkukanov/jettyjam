@@ -1,4 +1,4 @@
-package org.safehaus.embedded.jetty.simple;
+package org.safehaus.embedded.jetty.utils;
 
 
 import java.lang.annotation.ElementType;
@@ -12,7 +12,7 @@ import java.lang.annotation.Target;
  * An annotation containing various directives to configure JettyHandlers.
  */
 @Retention( RetentionPolicy.RUNTIME )
-@Target( ElementType.FIELD )
+@Target( { ElementType.FIELD, ElementType.TYPE } )
 @Inherited
 public @interface JettyHandlers {
     ServletMapping[] servletMappings();

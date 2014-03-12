@@ -1,4 +1,4 @@
-package java.org.safehaus.embedded.jetty.utils;
+package org.safehaus.embedded.jetty.utils;
 
 
 import java.io.IOException;
@@ -17,6 +17,7 @@ public class HelloWorldServlet extends HttpServlet {
     protected void doGet( final HttpServletRequest req, final HttpServletResponse resp )
             throws ServletException, IOException
     {
+        resp.setContentType( "text/plain" );
         resp.getOutputStream().println( "Hello World" );
         resp.flushBuffer();
     }

@@ -1,8 +1,32 @@
 package org.safehaus.embedded.jetty.simple;
 
 
+import org.safehaus.embedded.jetty.utils.JettyHandlers;
+import org.safehaus.embedded.jetty.utils.ServletMapping;
+
+
 /**
- * Created with IntelliJ IDEA. User: akarasulu Date: 3/11/14 Time: 9:49 AM To change this template use File | Settings |
- * File Templates.
+ * A simple Launcher.
  */
-public class Launcher {}
+@JettyHandlers(
+    servletMappings = { @ServletMapping( servlet = HelloWorldServlet.class, spec = "/*" ) },
+    filterMappings = {}
+)
+public class Launcher extends org.safehaus.embedded.jetty.utils.Launcher {
+
+    public Launcher() {
+        super( 0 );
+    }
+
+
+    @Override
+    public String getPackageBase() {
+        return getClass().getPackage().getName();
+    }
+
+
+    public static void main( String [] args ) throws Exception {
+        Launcher launcher = new Launcher();
+        launcher.start();
+    }
+}
