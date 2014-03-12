@@ -6,15 +6,15 @@ import org.safehaus.embedded.jetty.utils.ServletMapping;
 
 
 /**
- * A simple Launcher.
+ * A simple JettyLauncher.
  */
 @JettyHandlers(
     servletMappings = { @ServletMapping( servlet = HelloWorldServlet.class, spec = "/*" ) },
     filterMappings = {}
 )
-public class Launcher extends org.safehaus.embedded.jetty.utils.Launcher {
+public class JettyLauncher extends org.safehaus.embedded.jetty.utils.Launcher {
 
-    public Launcher() {
+    public JettyLauncher() {
         super( 0 );
     }
 
@@ -26,7 +26,7 @@ public class Launcher extends org.safehaus.embedded.jetty.utils.Launcher {
 
 
     public static void main( String [] args ) throws Exception {
-        Launcher launcher = new Launcher();
+        JettyLauncher launcher = new JettyLauncher();
         launcher.start();
     }
 }

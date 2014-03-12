@@ -40,6 +40,6 @@ public class TestHelloWorld {
                 .accept( MediaType.TEXT_PLAIN )
                 .get( String.class );
 
-        assertEquals( "Hello World", result );
+        assertEquals( HelloWorldServlet.MESSAGE, result );
     }
 }

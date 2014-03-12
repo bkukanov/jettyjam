@@ -87,7 +87,7 @@
           </descriptorRefs>
           <archive>
             <manifest>
-              <mainClass>org.safehaus.embedded.jetty.utils.Launcher</mainClass>
+              <mainClass>org.safehaus.embedded.jetty.simple.JettyLauncher</mainClass>
               <packageName>org.safehaus.embedded.jetty.simple</packageName>
             </manifest>
             <manifestEntries>
@@ -97,24 +97,6 @@
           </archive>
         </configuration>
       </plugin>
-
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-jar-plugin</artifactId>
-        <configuration>
-          <archive>
-            <manifest>
-              <mainClass>org.safehaus.embedded.jetty.utils.Launcher</mainClass>
-              <packageName>org.safehaus.embedded.jetty</packageName>
-            </manifest>
-            <manifestEntries>
-              <mode>development</mode>
-              <url>${pom.url}</url>
-            </manifestEntries>
-          </archive>
-        </configuration>
-      </plugin>
-
     </plugins>
   </build>
 
