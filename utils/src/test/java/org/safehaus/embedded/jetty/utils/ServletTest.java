@@ -1,13 +1,10 @@
-package org.safehaus.embedded.jetty.simple;
+package org.safehaus.embedded.jetty.utils;
 
 
 import javax.ws.rs.core.MediaType;
 
 import org.junit.Rule;
 import org.junit.Test;
-import org.safehaus.embedded.jetty.utils.JettyHandlers;
-import org.safehaus.embedded.jetty.utils.JettyResource;
-import org.safehaus.embedded.jetty.utils.ServletMapping;
 
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.config.DefaultClientConfig;
@@ -18,11 +15,11 @@ import static junit.framework.TestCase.assertEquals;
 /**
  * Tests the Hello World Servlet in embedded mode.
  */
-public class TestHelloWorld {
+public class ServletTest {
 
     @JettyHandlers(
         servletMappings = {
-                @ServletMapping( servlet = HelloWorldServlet.class, spec = "/*" )
+                @ServletMapping( servlet = TestServlet.class, spec = "/*" )
         },
         filterMappings = { }
     )
@@ -40,6 +37,6 @@ public class TestHelloWorld {
                 .accept( MediaType.TEXT_PLAIN )
                 .get( String.class );
 
-        assertEquals( "Hello World", result );
+        assertEquals( TestServlet.MESSAGE, result );
     }
 }

@@ -1,16 +1,27 @@
 package org.safehaus.embedded.jetty.utils;
 
 
+import javax.ws.rs.core.MediaType;
+
+import org.junit.Test;
+
+import com.sun.jersey.api.client.Client;
+import com.sun.jersey.api.client.config.DefaultClientConfig;
+
+import static junit.framework.TestCase.assertEquals;
+
+
 /**
  * Tests the Launcher functionality.
  */
 @JettyHandlers(
-    servletMappings = { @ServletMapping( servlet = HelloWorldServlet.class, spec = "/*" ) },
+    servletMappings = { @ServletMapping( servlet = TestServlet.class, spec = "/*" ) },
     filterMappings = {}
 )
 public class LauncherTest extends Launcher {
+    private static boolean runAsTest;
 
-    protected LauncherTest() {
+    public LauncherTest() {
         super( 0 );
     }
 
@@ -22,6 +33,28 @@ public class LauncherTest extends Launcher {
 
 
     public static void main( String [] args ) throws Exception {
-        new LauncherTest().start();
+        LauncherTest launcher = new LauncherTest();
+        launcher.start();
+
+        if ( runAsTest ) {
+            DefaultClientConfig clientConfig = new DefaultClientConfig();
+            Client client = Client.create( clientConfig );
+            String result = client
+                    .resource( launcher.getServerUrl().toString() )
+                    .path( "/" )
+                    .accept( MediaType.TEXT_PLAIN )
+                    .get( String.class );
+
+            assertEquals( TestServlet.MESSAGE, result );
+
+            launcher.stop();
+        }
+    }
+
+
+    @Test
+    public void testLauncher() throws Exception {
+        runAsTest = true;
+        main( null );
     }
 }

@@ -9,32 +9,37 @@ import org.junit.Test;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.config.DefaultClientConfig;
 
+import static junit.framework.TestCase.assertEquals;
+
 
 /**
  * Tests the Hello World Servlet in embedded mode.
  */
-public class TestHelloWorld {
+public class FilterTest {
+    public static final String ENDPOINT = "/test";
 
     @JettyHandlers(
         servletMappings = {
-                @ServletMapping( servlet = HelloWorldServlet.class, spec = "/*" )
+                @ServletMapping( servlet = TestServlet.class, spec = ENDPOINT )
         },
-        filterMappings = { }
+        filterMappings = {
+                @FilterMapping( filter = TestFilter.class, spec = "/*" )
+        }
     )
     @Rule
     public JettyResource service = new JettyResource();
 
 
     @Test
-    public void testHelloWorld() {
+    public void testFilter() {
         DefaultClientConfig clientConfig = new DefaultClientConfig();
         Client client = Client.create( clientConfig );
         String result = client
                 .resource( service.getServerUrl().toString() )
-                .path( "/" )
+                .path( ENDPOINT )
                 .accept( MediaType.TEXT_PLAIN )
                 .get( String.class );
 
-        System.out.println( result );
+        assertEquals( TestServlet.MESSAGE + TestFilter.MESSAGE, result );
     }
 }
