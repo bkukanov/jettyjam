@@ -6,8 +6,6 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.Reader;
-import java.io.StringReader;
 import java.lang.management.ManagementFactory;
 import java.net.URL;
 import java.util.Properties;
@@ -39,30 +37,14 @@ public abstract class Launcher {
     private URL serverUrl;
     private int port;
     private boolean started;
-    private long shutdownAfter = -1;
     private Timer timer = new Timer();
     private File pidFile;
     private final UUID appId;
     private final String appName;
 
 
-    public Server getServer() {
-        return server;
-    }
-
-
-    public int getPort() {
-        return port;
-    }
-
-
     public URL getServerUrl() {
         return serverUrl;
-    }
-
-
-    public boolean isStarted() {
-        return started;
     }
 
 
@@ -84,20 +66,6 @@ public abstract class Launcher {
         this.serverUrl = new URL( "http", "localhost", port, "" );
 
         setupPidFile();
-
-        if ( shutdownAfter > 0 ) {
-            timer.schedule( new TimerTask() {
-                @Override
-                public void run() {
-                    try {
-                        Launcher.this.stop();
-                    }
-                    catch ( Exception e ) {
-                        LOG.error( "Failed to stop jetty server {} after {} milliseconds", serverUrl, shutdownAfter );
-                    }
-                }
-            }, shutdownAfter ); // @todo make this a configurable command line option (archaius?)
-        }
 
         Runtime.getRuntime().addShutdownHook( new Thread( new Runnable() {
             @Override
@@ -171,10 +139,6 @@ public abstract class Launcher {
                             System.err.println( APP_NAME + ": " + appName );
                             System.err.println( PID_FILE + ": " + pidFile.getCanonicalPath() );
                         }
-
-                        if ( line == null ) {
-                            return;
-                        }
                     }
                     catch ( IOException e ) {
                         LOG.error( "While reading from input stream", e );
@@ -182,7 +146,6 @@ public abstract class Launcher {
                 }
             }
         } ).start();
-
     }
 
 
@@ -233,16 +196,6 @@ public abstract class Launcher {
 
     public UUID getAppId() {
         return appId;
-    }
-
-
-    public long getShutdownAfter() {
-        return shutdownAfter;
-    }
-
-
-    public void setShutdownAfter( final long shutdownAfter ) {
-        this.shutdownAfter = shutdownAfter;
     }
 }
 

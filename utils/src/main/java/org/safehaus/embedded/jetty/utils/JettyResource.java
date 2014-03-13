@@ -21,11 +21,13 @@ public class JettyResource implements TestRule {
     private boolean started;
 
 
+    @SuppressWarnings( "UnusedDeclaration" )
     public Server getServer() {
         return server;
     }
 
 
+    @SuppressWarnings( "UnusedDeclaration" )
     public int getPort() {
         return port;
     }
@@ -36,6 +38,7 @@ public class JettyResource implements TestRule {
     }
 
 
+    @SuppressWarnings( "UnusedDeclaration" )
     public boolean isStarted() {
         return started;
     }

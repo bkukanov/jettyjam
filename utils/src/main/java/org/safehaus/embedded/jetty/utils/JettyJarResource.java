@@ -51,11 +51,6 @@ public class JettyJarResource implements TestRule {
     }
 
 
-    public String getPidFilePath() {
-        return pidFilePath;
-    }
-
-
     public Properties getAppProperties() {
         return appProperties;
     }
