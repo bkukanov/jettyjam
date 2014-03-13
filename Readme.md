@@ -11,7 +11,7 @@ explored:
 * adding a Guice servlet
 * adding support for REST/JSON endpoints with Jersey and Jackson with Guice
 * adding support for Vaadin applications
-* enabling ssh support
+* enabling HTTPS connectors
  
 Each addition from simple to complex will be represented with a new Maven
 module. Also the latest versions of all the libraries will be used to build

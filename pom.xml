@@ -64,6 +64,7 @@ scm:git:http://${safehaus.git.username}@stash.safehaus.org/scm/AOK/embedded-jett
   <modules>
     <module>utils</module>
     <module>simple-servlet</module>
+    <module>https-servlet</module>
   </modules>
 
   <build>
