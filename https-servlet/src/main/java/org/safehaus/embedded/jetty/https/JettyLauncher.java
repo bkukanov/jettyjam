@@ -1,4 +1,4 @@
-package org.safehaus.embedded.jetty.simple;
+package org.safehaus.embedded.jetty.https;
 
 
 import org.safehaus.embedded.jetty.utils.JettyHandlers;
