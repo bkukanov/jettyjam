@@ -22,7 +22,7 @@ public class LauncherTest extends Launcher {
     private static boolean runAsTest;
 
     public LauncherTest() {
-        super( 0 );
+        super( "SimpleTestApp", 0 );
     }
 
 

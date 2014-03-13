@@ -18,7 +18,7 @@ import static junit.framework.TestCase.assertEquals;
 /**
  * Tests the Hello World Servlet in embedded mode.
  */
-public class TestHelloWorld {
+public class EmbeddedAppTest {
 
     @JettyHandlers(
         servletMappings = {

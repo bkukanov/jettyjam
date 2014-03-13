@@ -1,7 +1,19 @@
 package org.safehaus.embedded.jetty.utils;
 
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.io.StringReader;
+import java.lang.management.ManagementFactory;
 import java.net.URL;
+import java.util.Properties;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.UUID;
 
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
@@ -14,10 +26,24 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class Launcher {
     private static final Logger LOG = LoggerFactory.getLogger( Launcher.class );
+
+    public static final String PRINT_ALL = "print_all";
+    public static final String SHUTDOWN = "shutdown";
+    public static final String SERVER_URL = "serverUrl";
+    public static final String SERVER_PORT = "serverPort";
+    public static final String APP_ID = "appId";
+    public static final String APP_NAME = "appName";
+    public static final String PID_FILE = "pidFile";
+
     private final Server server;
     private URL serverUrl;
     private int port;
     private boolean started;
+    private long shutdownAfter = -1;
+    private Timer timer = new Timer();
+    private File pidFile;
+    private final UUID appId;
+    private final String appName;
 
 
     public Server getServer() {
@@ -40,9 +66,11 @@ public abstract class Launcher {
     }
 
 
-    protected Launcher( int port ) {
-        this.server = new Server( port );
-        LOG.info( "Launcher created on port {}", port );
+    protected Launcher( String appName, int port ) {
+        server = new Server( port );
+        appId = UUID.randomUUID();
+        this.appName = appName;
+        LOG.info( "Launcher for appId {} created on port {}", appId, port );
     }
 
 
@@ -55,16 +83,166 @@ public abstract class Launcher {
         this.port = connector.getLocalPort();
         this.serverUrl = new URL( "http", "localhost", port, "" );
 
+        setupPidFile();
+
+        if ( shutdownAfter > 0 ) {
+            timer.schedule( new TimerTask() {
+                @Override
+                public void run() {
+                    try {
+                        Launcher.this.stop();
+                    }
+                    catch ( Exception e ) {
+                        LOG.error( "Failed to stop jetty server {} after {} milliseconds", serverUrl, shutdownAfter );
+                    }
+                }
+            }, shutdownAfter ); // @todo make this a configurable command line option (archaius?)
+        }
+
+        Runtime.getRuntime().addShutdownHook( new Thread( new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Launcher.this.stop();
+                }
+                catch ( Exception e ) {
+                    LOG.error( "Failed to stop jetty server in JVM shutdown hook.", e );
+                }
+            }
+        } ) );
+
+        timer.scheduleAtFixedRate( new TimerTask() {
+            @Override
+            public void run() {
+                if ( ! pidFile.exists() ) {
+                    try {
+                        Launcher.this.stop();
+                    }
+                    catch ( Exception e ) {
+                        LOG.error( "Failed to stop jetty server after pidFile removal", e );
+                    }
+                }
+            }
+        }, 200, 200 ); // @todo make these configurable command line options (archaius?)
+
         started = true;
+
+        new Thread( new Runnable() {
+
+            @Override
+            public void run() {
+                String line;
+                BufferedReader in = new BufferedReader( new InputStreamReader( System.in ) );
+
+                while ( started ) {
+                    try {
+                        line = in.readLine();
+
+                        LOG.info( "Line gotten from CLI: {}", line );
+
+                        if ( line.equalsIgnoreCase( SHUTDOWN ) ) {
+                            try {
+                                stop();
+                                System.exit( 0 );
+                            }
+                            catch ( Exception e ) {
+                                LOG.error( "While shutting down", e );
+                            }
+                        }
+                        else if ( line.equalsIgnoreCase( SERVER_URL ) ) {
+                            System.err.println( serverUrl.toString() );
+                        }
+                        else if ( line.equalsIgnoreCase( SERVER_PORT ) ) {
+                            System.err.println( port );
+                        }
+                        else if ( line.equalsIgnoreCase( APP_ID ) ) {
+                            System.err.println( appId.toString() );
+                        }
+                        else if ( line.equalsIgnoreCase( APP_NAME ) ) {
+                            System.err.println( appName );
+                        }
+                        else if ( line.equalsIgnoreCase( PID_FILE ) ) {
+                            System.err.println( pidFile.getCanonicalPath() );
+                        }
+                        else if ( line.equalsIgnoreCase( PRINT_ALL ) ) {
+                            System.err.println( SERVER_URL + ": " + serverUrl.toString() );
+                            System.err.println( SERVER_PORT + ": " + port );
+                            System.err.println( APP_ID + ": " + appId.toString() );
+                            System.err.println( APP_NAME + ": " + appName );
+                            System.err.println( PID_FILE + ": " + pidFile.getCanonicalPath() );
+                        }
+
+                        if ( line == null ) {
+                            return;
+                        }
+                    }
+                    catch ( IOException e ) {
+                        LOG.error( "While reading from input stream", e );
+                    }
+                }
+            }
+        } ).start();
+
+    }
+
+
+    // Also listen to standard in for a shutdown command - shutdown on pid file removal also
+    // Removal of pid file destroys the application and exists
+    // Remove the pid file on premature JVM shutdown - need a RT hook for that
+    // Later on make this a real pid file with the process ID and enable the use of many apps
+
+    private void setupPidFile() throws IOException {
+        pidFile = File.createTempFile( getAppId().toString(), ".pid" );
+        Properties properties = new Properties();
+        properties.setProperty( APP_ID, getAppId().toString() );
+        properties.setProperty( APP_NAME, getAppName() );
+        properties.setProperty( SERVER_URL, getServerUrl().toString() );
+        properties.setProperty( SERVER_PORT, String.valueOf( port ) );
+
+        FileWriter out = new FileWriter( pidFile );
+        properties.store( out, "Generated by launcher process: "
+                + ManagementFactory.getRuntimeMXBean().getName() );
+        out.flush();
+        out.close();
+
+        System.out.println( "pidFile: " + pidFile.getCanonicalPath() );
+    }
+
+
+    private void cleanupPidFile() throws IOException {
+        if ( ! pidFile.delete() ) {
+            pidFile.deleteOnExit();
+        }
     }
 
 
     protected void stop() throws Exception {
         server.stop();
+        cleanupPidFile();
         started = false;
     }
 
 
     public abstract String getPackageBase();
+
+
+    public String getAppName() {
+        return appName;
+    }
+
+
+    public UUID getAppId() {
+        return appId;
+    }
+
+
+    public long getShutdownAfter() {
+        return shutdownAfter;
+    }
+
+
+    public void setShutdownAfter( final long shutdownAfter ) {
+        this.shutdownAfter = shutdownAfter;
+    }
 }
 

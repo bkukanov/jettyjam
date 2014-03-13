@@ -15,7 +15,7 @@ import org.safehaus.embedded.jetty.utils.ServletMapping;
 public class JettyLauncher extends org.safehaus.embedded.jetty.utils.Launcher {
 
     public JettyLauncher() {
-        super( 0 );
+        super( "TestApp", 0 );
     }
 
 
