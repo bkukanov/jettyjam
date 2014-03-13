@@ -20,10 +20,10 @@ public class FilterTest {
 
     @JettyHandlers(
         servletMappings = {
-                @ServletMapping( servlet = TestServlet.class, spec = ENDPOINT )
+            @ServletMapping( servlet = TestServlet.class, spec = ENDPOINT )
         },
         filterMappings = {
-                @FilterMapping( filter = TestFilter.class, spec = "/*" )
+            @FilterMapping( filter = TestFilter.class, spec = "/*" )
         }
     )
     @Rule

@@ -1,6 +1,9 @@
 package org.safehaus.embedded.jetty.https;
 
 
+import org.safehaus.embedded.jetty.utils.HttpConnector;
+import org.safehaus.embedded.jetty.utils.HttpsConnector;
+import org.safehaus.embedded.jetty.utils.JettyConnectors;
 import org.safehaus.embedded.jetty.utils.JettyHandlers;
 import org.safehaus.embedded.jetty.utils.ServletMapping;
 
@@ -12,10 +15,15 @@ import org.safehaus.embedded.jetty.utils.ServletMapping;
     servletMappings = { @ServletMapping( servlet = HelloWorldServlet.class, spec = "/*" ) },
     filterMappings = {}
 )
+@JettyConnectors(
+    defaultId = "https",
+    httpConnectors = { @HttpConnector( id = "http" ) },
+    httpsConnectors = { @HttpsConnector( id = "https" ) }
+)
 public class JettyLauncher extends org.safehaus.embedded.jetty.utils.Launcher {
 
     public JettyLauncher() {
-        super( "TestApp", 0 );
+        super( "TestApp", JettyLauncher.class.getClassLoader() );
     }
 
 

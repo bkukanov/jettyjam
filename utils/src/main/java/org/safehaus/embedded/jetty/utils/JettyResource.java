@@ -15,10 +15,12 @@ import org.slf4j.LoggerFactory;
 /** A Jetty ExternalResource for this project. */
 public class JettyResource implements TestRule {
     private static final Logger LOG = LoggerFactory.getLogger( JettyResource.class );
-    private final Server server = new Server( 0 );
+    private final Server server = new Server();
+    private ServerConnector defaultConnector;
     private URL serverUrl;
     private int port;
     private boolean started;
+    private String hostname;
 
 
     @SuppressWarnings( "UnusedDeclaration" )
@@ -27,7 +29,6 @@ public class JettyResource implements TestRule {
     }
 
 
-    @SuppressWarnings( "UnusedDeclaration" )
     public int getPort() {
         return port;
     }
@@ -54,9 +55,19 @@ public class JettyResource implements TestRule {
         // Fire up the servlet with the handler
         server.start();
 
-        ServerConnector connector = ( ServerConnector ) server.getConnectors()[0];
-        this.port = connector.getLocalPort();
-        this.serverUrl = new URL( "http", "localhost", port, "" );
+        this.port = defaultConnector.getLocalPort();
+        this.hostname = defaultConnector.getHost();
+
+        if ( this.hostname == null ) {
+            this.hostname = "localhost";
+        }
+
+        String protocol = "http";
+        if ( defaultConnector.getDefaultProtocol().contains( "SSL" ) ) {
+            protocol = "https";
+        }
+
+        this.serverUrl = new URL( protocol, "localhost", port, "" );
         this.started = true;
     }
 
@@ -73,6 +84,7 @@ public class JettyResource implements TestRule {
 
     @Override
     public Statement apply( Statement base, Description description ) {
+        defaultConnector = ConnectorBuilder.setConnectors( description.getTestClass(), server );
         HandlerBuilder builder = new HandlerBuilder();
         server.setHandler( builder.build( description.getTestClass() ) );
         return statement( base );
@@ -92,5 +104,10 @@ public class JettyResource implements TestRule {
                 }
             }
         };
+    }
+
+
+    public String getHostname() {
+        return hostname;
     }
 }

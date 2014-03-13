@@ -27,6 +27,14 @@
           <include>**/*.properties</include>
         </includes>
       </resource>
+      <resource>
+        <directory>src/main/resources</directory>
+        <filtering>false</filtering>
+        <includes>
+          <include>**/*.jks</include>
+          <include>**/*.cer</include>
+        </includes>
+      </resource>
     </resources>
 
     <testResources>

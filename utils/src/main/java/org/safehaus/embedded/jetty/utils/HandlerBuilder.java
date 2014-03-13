@@ -123,7 +123,7 @@ public class HandlerBuilder {
             LOG.debug( "Looking at {} field of {} test class", field.getName(), testClass.getName() );
 
             if ( JettyResource.class.isAssignableFrom( field.getType() ) ) {
-                LOG.info( "Found JettyResource for {} field of {} test class", field.getName(), testClass.getName() );
+                LOG.debug( "Found JettyResource for {} field of {} test class", field.getName(), testClass.getName() );
 
                 return field;
             }

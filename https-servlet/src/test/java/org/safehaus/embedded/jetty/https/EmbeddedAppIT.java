@@ -5,6 +5,7 @@ import javax.ws.rs.core.MediaType;
 
 import org.junit.Rule;
 import org.junit.Test;
+import org.safehaus.embedded.jetty.utils.CertUtils;
 import org.safehaus.embedded.jetty.utils.JettyJarResource;
 import org.safehaus.embedded.jetty.utils.Launcher;
 import org.slf4j.Logger;
@@ -30,6 +31,7 @@ public class EmbeddedAppIT {
     public void testEmbeddedApp() throws Exception {
         LOG.info( "integration testing embedded jetty application executable jar file" );
 
+        CertUtils.preparations( app.getHostname(), app.getPort() );
         DefaultClientConfig clientConfig = new DefaultClientConfig();
         Client client = Client.create( clientConfig );
         String result = client

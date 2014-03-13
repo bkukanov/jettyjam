@@ -34,6 +34,8 @@ public class JettyJarResource implements TestRule {
     private BufferedReader in;
     private String pidFilePath;
     private Properties appProperties;
+    private String hostname;
+    private int port;
 
 
     /**
@@ -127,6 +129,9 @@ public class JettyJarResource implements TestRule {
         appProperties.load( new FileInputStream( pidFilePath ) );
         LOG.info( "Loaded properties file: {}", pidFilePath );
         appProperties.list( System.out );
+
+        port = Integer.parseInt( appProperties.getProperty( Launcher.SERVER_PORT ) );
+        hostname = "localhost";
     }
 
 
@@ -162,5 +167,15 @@ public class JettyJarResource implements TestRule {
                 }
             }
         };
+    }
+
+
+    public String getHostname() {
+        return hostname;
+    }
+
+
+    public int getPort() {
+        return port;
     }
 }

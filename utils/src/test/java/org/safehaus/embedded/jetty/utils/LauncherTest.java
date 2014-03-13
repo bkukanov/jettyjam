@@ -22,7 +22,7 @@ public class LauncherTest extends Launcher {
     private static boolean runAsTest;
 
     public LauncherTest() {
-        super( "SimpleTestApp", 0 );
+        super( "SimpleTestApp", LauncherTest.class.getClassLoader() );
     }
 
 

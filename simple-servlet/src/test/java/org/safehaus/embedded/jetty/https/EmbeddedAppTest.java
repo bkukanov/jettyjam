@@ -22,7 +22,7 @@ public class EmbeddedAppTest {
 
     @JettyHandlers(
         servletMappings = {
-                @ServletMapping( servlet = HelloWorldServlet.class, spec = "/*" )
+            @ServletMapping( servlet = HelloWorldServlet.class, spec = "/*" )
         },
         filterMappings = { }
     )

@@ -39,8 +39,10 @@ public abstract class Launcher {
     private boolean started;
     private Timer timer = new Timer();
     private File pidFile;
+    private final ClassLoader classLoader;
     private final UUID appId;
     private final String appName;
+    private String hostname;
 
 
     public URL getServerUrl() {
@@ -48,22 +50,31 @@ public abstract class Launcher {
     }
 
 
-    protected Launcher( String appName, int port ) {
-        server = new Server( port );
+    protected Launcher( String appName, ClassLoader cl ) {
+        classLoader = cl;
+        server = new Server();
         appId = UUID.randomUUID();
         this.appName = appName;
-        LOG.info( "Launcher for appId {} created on port {}", appId, port );
+        LOG.info( "Launcher for appId {}", appId );
     }
 
 
     protected void start() throws Exception {
+        ServerConnector defaultConnector = ConnectorBuilder.setConnectors( getPackageBase(), classLoader, server );
+        if ( defaultConnector.getHost() == null ) {
+            hostname = "localhost";
+        }
+
         HandlerBuilder handlerBuilder = new HandlerBuilder();
         server.setHandler( handlerBuilder.buildForLauncher( getPackageBase() ) );
         server.start();
 
-        ServerConnector connector = ( ServerConnector ) server.getConnectors()[0];
-        this.port = connector.getLocalPort();
-        this.serverUrl = new URL( "http", "localhost", port, "" );
+        this.port = defaultConnector.getLocalPort();
+        String protocol = "http";
+        if ( defaultConnector.getDefaultProtocol().contains( "SSL" ) ) {
+            protocol = "https";
+        }
+        this.serverUrl = new URL( protocol, hostname, port, "" );
 
         setupPidFile();
 
@@ -196,6 +207,16 @@ public abstract class Launcher {
 
     public UUID getAppId() {
         return appId;
+    }
+
+
+    public String getHostname() {
+        return hostname;
+    }
+
+
+    public int getPort() {
+        return port;
     }
 }
 
