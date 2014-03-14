@@ -8,12 +8,11 @@
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
-  <name>Embedded Jetty HTTPS Servlet</name>
-  <artifactId>https-servlet</artifactId>
+  <name>Embedded Jetty, Jackson, Jersey Application</name>
+  <artifactId>jjj-rest-app</artifactId>
   <packaging>jar</packaging>
   <description>
-    A simple https servlet that runs in an embedded jetty instance from an 
-    executable jar file without requiring the webapp to be exploded.
+    An embedded Jetty, Jackson, Jersey based REST application example.
   </description>
 
   <build>
@@ -25,14 +24,6 @@
         <filtering>true</filtering>
         <includes>
           <include>**/*.properties</include>
-        </includes>
-      </resource>
-      <resource>
-        <directory>src/main/resources</directory>
-        <filtering>false</filtering>
-        <includes>
-          <include>**/*.jks</include>
-          <include>**/*.cer</include>
         </includes>
       </resource>
     </resources>

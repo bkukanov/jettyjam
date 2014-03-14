@@ -9,7 +9,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <name>Embedded Jetty Utils</name>
-  <artifactId>embedded-jetty-utils</artifactId>
+  <artifactId>utils</artifactId>
   <packaging>jar</packaging>
   <description>
     A set of utilities used to setup embedded launchers and test with Jetty.
