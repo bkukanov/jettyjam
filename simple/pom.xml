@@ -9,7 +9,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <name>JettyJam Simple Servlet</name>
-  <artifactId>simple-servlet</artifactId>
+  <artifactId>simple</artifactId>
   <packaging>jar</packaging>
   <description>
     A simple servlet that runs in an embedded jetty instance from an executable
@@ -82,7 +82,7 @@
           </descriptorRefs>
           <archive>
             <manifest>
-              <mainClass>org.safehaus.embedded.jetty.simple.JettyLauncher</mainClass>
+              <mainClass>org.safehaus.jettyjam.simple.SimpleAppLauncher</mainClass>
               <packageName>org.safehaus.embedded.jetty.simple</packageName>
             </manifest>
             <manifestEntries>

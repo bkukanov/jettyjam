@@ -81,7 +81,7 @@
           </descriptorRefs>
           <archive>
             <manifest>
-              <mainClass>org.safehaus.embedded.jetty.jjj.JettyLauncher</mainClass>
+              <mainClass>org.safehaus.jettyjam.rest.RestAppLauncher</mainClass>
               <packageName>org.safehaus.embedded.jetty.jjj</packageName>
             </manifest>
             <manifestEntries>

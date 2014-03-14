@@ -90,7 +90,7 @@
           </descriptorRefs>
           <archive>
             <manifest>
-              <mainClass>org.safehaus.embedded.jetty.https.JettyLauncher</mainClass>
+              <mainClass>org.safehaus.jettyjam.https.SecureAppLauncher</mainClass>
               <packageName>org.safehaus.embedded.jetty.https</packageName>
             </manifest>
             <manifestEntries>
