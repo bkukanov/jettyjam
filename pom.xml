@@ -7,11 +7,11 @@
     <version>7</version>
   </parent>
 
-  <artifactId>embedded-jetty-parent</artifactId>
-  <groupId>org.safehaus.embedded.jetty</groupId>
+  <artifactId>jettyjam-parent</artifactId>
+  <groupId>org.safehaus.jettyjam</groupId>
   <version>1.0.0-SNAPSHOT</version>
   <modelVersion>4.0.0</modelVersion>
-  <name>Embedded Jetty Parent</name>
+  <name>JettyJam Parent</name>
 
   <packaging>pom</packaging>
   <description>Embedded Jetty as executable jar files</description>
@@ -32,12 +32,12 @@
   </developers>
 
   <scm>
-    <url>http://stash.safehaus.org/projects/AOK/repos/embedded-jetty/browse</url>
+    <url>http://stash.safehaus.org/projects/JETTYJAM/repos/main/browse</url>
     <connection>
-      scm:git:http://stash.safehaus.org/scm/AOK/embedded-jetty.git
+      scm:git:http://stash.safehaus.org/scm/JETTYJAM/main.git
     </connection>
     <developerConnection>
-scm:git:http://${safehaus.git.username}@stash.safehaus.org/scm/AOK/embedded-jetty.git
+scm:git:http://${safehaus.git.username}@stash.safehaus.org/scm/JETTYJAM/main.git
     </developerConnection>
     <tag>HEAD</tag>
   </scm>
@@ -63,10 +63,10 @@ scm:git:http://${safehaus.git.username}@stash.safehaus.org/scm/AOK/embedded-jett
 
   <modules>
     <module>utils</module>
-    <module>simple-servlet</module>
-    <module>https-servlet</module>
-    <module>jjj-rest-app</module>
-    <module>vaadin-rest-app</module>
+    <module>simple</module>
+    <module>https</module>
+    <module>rest</module>
+    <module>vaadin</module>
   </modules>
 
   <build>

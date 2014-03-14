@@ -2,18 +2,18 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <parent>
-    <artifactId>embedded-jetty-parent</artifactId>
-    <groupId>org.safehaus.embedded.jetty</groupId>
+    <artifactId>jettyjam-parent</artifactId>
+    <groupId>org.safehaus.jettyjam</groupId>
     <version>1.0.0-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
-  <name>Embedded Jetty Simple Servlet</name>
-  <artifactId>simple-servlet</artifactId>
+  <name>JettyJam Vaadin UI</name>
+  <artifactId>vaadin</artifactId>
   <packaging>jar</packaging>
   <description>
-    A simple servlet that runs in an embedded jetty instance from an executable
-    jar file without requiring the webapp to be exploded.
+    An embedded Jetty, Jackson, Jersey based REST application with Vaadin UI
+    example.
   </description>
 
   <build>
@@ -82,8 +82,8 @@
           </descriptorRefs>
           <archive>
             <manifest>
-              <mainClass>org.safehaus.embedded.jetty.simple.JettyLauncher</mainClass>
-              <packageName>org.safehaus.embedded.jetty.simple</packageName>
+              <mainClass>org.safehaus.embedded.jetty.vaadin.JettyLauncher</mainClass>
+              <packageName>org.safehaus.embedded.jetty.vaadin</packageName>
             </manifest>
             <manifestEntries>
               <mode>development</mode>
@@ -120,6 +120,51 @@
     <dependency>
       <groupId>com.sun.jersey</groupId>
       <artifactId>jersey-client</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>com.sun.jersey</groupId>
+      <artifactId>jersey-server</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>com.sun.jersey.contribs</groupId>
+      <artifactId>jersey-guice</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>com.google.inject</groupId>
+      <artifactId>guice</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>com.google.inject.extensions</groupId>
+      <artifactId>guice-servlet</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>com.fasterxml.jackson.jaxrs</groupId>
+      <artifactId>jackson-jaxrs-json-provider</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>com.vaadin</groupId>
+      <artifactId>vaadin-server</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>com.vaadin</groupId>
+      <artifactId>vaadin-client-compiled</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>com.vaadin</groupId>
+      <artifactId>vaadin-client</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>com.vaadin</groupId>
+      <artifactId>vaadin-themes</artifactId>
     </dependency>
 
     <!-- Test Dependencies -->

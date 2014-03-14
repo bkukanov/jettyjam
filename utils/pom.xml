@@ -2,13 +2,13 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <parent>
-    <artifactId>embedded-jetty-parent</artifactId>
-    <groupId>org.safehaus.embedded.jetty</groupId>
+    <artifactId>jettyjam-parent</artifactId>
+    <groupId>org.safehaus.jettyjam</groupId>
     <version>1.0.0-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
-  <name>Embedded Jetty Utils</name>
+  <name>JettyJam Utils</name>
   <artifactId>utils</artifactId>
   <packaging>jar</packaging>
   <description>

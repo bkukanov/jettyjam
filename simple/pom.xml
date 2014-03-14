@@ -2,18 +2,18 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <parent>
-    <artifactId>embedded-jetty-parent</artifactId>
-    <groupId>org.safehaus.embedded.jetty</groupId>
+    <artifactId>jettyjam-parent</artifactId>
+    <groupId>org.safehaus.jettyjam</groupId>
     <version>1.0.0-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
-  <name>Embedded Jetty HTTPS Servlet</name>
-  <artifactId>https-servlet</artifactId>
+  <name>JettyJam Simple Servlet</name>
+  <artifactId>simple-servlet</artifactId>
   <packaging>jar</packaging>
   <description>
-    A simple https servlet that runs in an embedded jetty instance from an 
-    executable jar file without requiring the webapp to be exploded.
+    A simple servlet that runs in an embedded jetty instance from an executable
+    jar file without requiring the webapp to be exploded.
   </description>
 
   <build>
@@ -25,14 +25,6 @@
         <filtering>true</filtering>
         <includes>
           <include>**/*.properties</include>
-        </includes>
-      </resource>
-      <resource>
-        <directory>src/main/resources</directory>
-        <filtering>false</filtering>
-        <includes>
-          <include>**/*.jks</include>
-          <include>**/*.cer</include>
         </includes>
       </resource>
     </resources>
@@ -90,8 +82,8 @@
           </descriptorRefs>
           <archive>
             <manifest>
-              <mainClass>org.safehaus.embedded.jetty.https.JettyLauncher</mainClass>
-              <packageName>org.safehaus.embedded.jetty.https</packageName>
+              <mainClass>org.safehaus.embedded.jetty.simple.JettyLauncher</mainClass>
+              <packageName>org.safehaus.embedded.jetty.simple</packageName>
             </manifest>
             <manifestEntries>
               <mode>development</mode>
