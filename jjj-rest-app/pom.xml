@@ -81,8 +81,8 @@
           </descriptorRefs>
           <archive>
             <manifest>
-              <mainClass>org.safehaus.embedded.jetty.https.JettyLauncher</mainClass>
-              <packageName>org.safehaus.embedded.jetty.https</packageName>
+              <mainClass>org.safehaus.embedded.jetty.jjj.JettyLauncher</mainClass>
+              <packageName>org.safehaus.embedded.jetty.jjj</packageName>
             </manifest>
             <manifestEntries>
               <mode>development</mode>

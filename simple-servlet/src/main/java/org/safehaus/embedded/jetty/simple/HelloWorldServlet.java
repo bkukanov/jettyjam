@@ -1,4 +1,4 @@
-package org.safehaus.embedded.jetty.https;
+package org.safehaus.embedded.jetty.simple;
 
 
 import java.io.IOException;

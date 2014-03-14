@@ -1,4 +1,4 @@
-package org.safehaus.embedded.jetty.https;
+package org.safehaus.embedded.jetty.simple;
 
 
 import javax.ws.rs.core.MediaType;
