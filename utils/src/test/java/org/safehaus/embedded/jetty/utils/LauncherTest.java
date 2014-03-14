@@ -14,9 +14,8 @@ import static junit.framework.TestCase.assertEquals;
 /**
  * Tests the Launcher functionality.
  */
-@JettyHandlers(
-    servletMappings = { @ServletMapping( servlet = TestServlet.class, spec = "/*" ) },
-    filterMappings = {}
+@JettyContext(
+    servletMappings = { @ServletMapping( servlet = TestServlet.class, spec = "/*" ) }
 )
 public class LauncherTest extends Launcher {
     private static boolean runAsTest;

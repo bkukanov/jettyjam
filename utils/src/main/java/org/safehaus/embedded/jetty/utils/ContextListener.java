@@ -7,15 +7,16 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import javax.servlet.ServletContextListener;
+
 
 /**
- * A Connector annotations for configuring Jetty connectors.
+ * A configuration annotation to add a context Listener to Jetty.
  */
 @Retention( RetentionPolicy.RUNTIME )
 @Target( { ElementType.FIELD, ElementType.TYPE } )
 @Inherited
-public @interface JettyConnectors {
-    HttpConnector[] httpConnectors() default {};
-    HttpsConnector[] httpsConnectors() default {};
-    String defaultId();
+public @interface ContextListener {
+    Class<? extends ServletContextListener> listener();
+    String contextPath() default "/";
 }

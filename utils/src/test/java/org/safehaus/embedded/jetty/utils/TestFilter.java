@@ -25,6 +25,8 @@ public class TestFilter implements Filter {
     @Override
     public void doFilter( final ServletRequest req, final ServletResponse resp, final FilterChain chain )
             throws IOException, ServletException {
+        chain.doFilter( req, resp );
+
         resp.setContentType( "text/plain" );
         resp.getOutputStream().print( MESSAGE );
         resp.flushBuffer();

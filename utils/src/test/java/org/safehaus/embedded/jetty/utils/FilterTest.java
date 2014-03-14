@@ -18,7 +18,7 @@ import static junit.framework.TestCase.assertEquals;
 public class FilterTest {
     public static final String ENDPOINT = "/test";
 
-    @JettyHandlers(
+    @JettyContext(
         servletMappings = {
             @ServletMapping( servlet = TestServlet.class, spec = ENDPOINT )
         },

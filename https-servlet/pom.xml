@@ -106,7 +106,7 @@
   <dependencies>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>embedded-jetty-utils</artifactId>
+      <artifactId>utils</artifactId>
       <version>${project.version}</version>
     </dependency>
 

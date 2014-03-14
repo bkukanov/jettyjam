@@ -1,14 +1,14 @@
 package org.safehaus.embedded.jetty.simple;
 
 
-import org.safehaus.embedded.jetty.utils.JettyHandlers;
+import org.safehaus.embedded.jetty.utils.JettyContext;
 import org.safehaus.embedded.jetty.utils.ServletMapping;
 
 
 /**
  * A simple JettyLauncher.
  */
-@JettyHandlers(
+@JettyContext(
     servletMappings = { @ServletMapping( servlet = HelloWorldServlet.class, spec = "/*" ) },
     filterMappings = {}
 )

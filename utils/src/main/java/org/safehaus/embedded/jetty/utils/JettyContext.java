@@ -9,12 +9,14 @@ import java.lang.annotation.Target;
 
 
 /**
- * An annotation containing various directives to configure JettyHandlers.
+ * An annotation containing various directives to configure JettyContext.
  */
 @Retention( RetentionPolicy.RUNTIME )
 @Target( { ElementType.FIELD, ElementType.TYPE } )
 @Inherited
-public @interface JettyHandlers {
-    ServletMapping[] servletMappings();
-    FilterMapping[] filterMappings();
+public @interface JettyContext {
+    String contextRoot() default "/";
+    ServletMapping[] servletMappings() default {};
+    FilterMapping[] filterMappings() default {};
+    ContextListener[] contextListeners() default {};
 }

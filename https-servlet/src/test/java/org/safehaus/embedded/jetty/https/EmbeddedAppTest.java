@@ -9,7 +9,7 @@ import org.safehaus.embedded.jetty.utils.CertUtils;
 import org.safehaus.embedded.jetty.utils.HttpConnector;
 import org.safehaus.embedded.jetty.utils.HttpsConnector;
 import org.safehaus.embedded.jetty.utils.JettyConnectors;
-import org.safehaus.embedded.jetty.utils.JettyHandlers;
+import org.safehaus.embedded.jetty.utils.JettyContext;
 import org.safehaus.embedded.jetty.utils.JettyResource;
 import org.safehaus.embedded.jetty.utils.ServletMapping;
 
@@ -24,11 +24,10 @@ import static junit.framework.TestCase.assertEquals;
  */
 public class EmbeddedAppTest {
 
-    @JettyHandlers(
+    @JettyContext(
         servletMappings = {
                 @ServletMapping( servlet = HelloWorldServlet.class, spec = "/*" )
-        },
-        filterMappings = { }
+        }
     )
     @JettyConnectors(
         defaultId = "https",

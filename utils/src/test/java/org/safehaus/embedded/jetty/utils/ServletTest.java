@@ -17,11 +17,10 @@ import static junit.framework.TestCase.assertEquals;
  */
 public class ServletTest {
 
-    @JettyHandlers(
+    @JettyContext(
         servletMappings = {
                 @ServletMapping( servlet = TestServlet.class, spec = "/*" )
-        },
-        filterMappings = { }
+        }
     )
     @Rule
     public JettyResource service = new JettyResource();

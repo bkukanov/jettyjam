@@ -5,7 +5,7 @@ import javax.ws.rs.core.MediaType;
 
 import org.junit.Rule;
 import org.junit.Test;
-import org.safehaus.embedded.jetty.utils.JettyHandlers;
+import org.safehaus.embedded.jetty.utils.JettyContext;
 import org.safehaus.embedded.jetty.utils.JettyResource;
 import org.safehaus.embedded.jetty.utils.ServletMapping;
 
@@ -20,11 +20,10 @@ import static junit.framework.TestCase.assertEquals;
  */
 public class EmbeddedAppTest {
 
-    @JettyHandlers(
+    @JettyContext(
         servletMappings = {
             @ServletMapping( servlet = HelloWorldServlet.class, spec = "/*" )
-        },
-        filterMappings = { }
+        }
     )
     @Rule
     public JettyResource service = new JettyResource();

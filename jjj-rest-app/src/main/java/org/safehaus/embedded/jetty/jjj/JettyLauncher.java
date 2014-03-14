@@ -1,16 +1,19 @@
 package org.safehaus.embedded.jetty.jjj;
 
 
-import org.safehaus.embedded.jetty.utils.JettyHandlers;
+import org.safehaus.embedded.jetty.utils.FilterMapping;
+import org.safehaus.embedded.jetty.utils.JettyContext;
 import org.safehaus.embedded.jetty.utils.ServletMapping;
+
+import com.google.inject.servlet.GuiceFilter;
 
 
 /**
  * A simple JettyLauncher.
  */
-@JettyHandlers(
+@JettyContext(
     servletMappings = { @ServletMapping( servlet = HelloWorldServlet.class, spec = "/*" ) },
-    filterMappings = {}
+    filterMappings = { @FilterMapping( filter = GuiceFilter.class, spec = "/*") }
 )
 public class JettyLauncher extends org.safehaus.embedded.jetty.utils.Launcher {
 

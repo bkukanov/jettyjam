@@ -66,7 +66,7 @@ public abstract class Launcher {
         }
 
         HandlerBuilder handlerBuilder = new HandlerBuilder();
-        server.setHandler( handlerBuilder.buildForLauncher( getPackageBase() ) );
+        server.setHandler( handlerBuilder.buildForLauncher( getPackageBase(), server ) );
         server.start();
 
         this.port = defaultConnector.getLocalPort();

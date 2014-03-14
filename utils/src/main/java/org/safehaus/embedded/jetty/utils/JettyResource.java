@@ -5,6 +5,7 @@ import java.net.URL;
 
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
+import org.eclipse.jetty.server.handler.HandlerCollection;
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
@@ -86,7 +87,7 @@ public class JettyResource implements TestRule {
     public Statement apply( Statement base, Description description ) {
         defaultConnector = ConnectorBuilder.setConnectors( description.getTestClass(), server );
         HandlerBuilder builder = new HandlerBuilder();
-        server.setHandler( builder.build( description.getTestClass() ) );
+        server.setHandler( builder.build( description.getTestClass(), server ) );
         return statement( base );
     }
 

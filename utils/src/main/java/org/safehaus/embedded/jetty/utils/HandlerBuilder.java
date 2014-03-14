@@ -5,10 +5,9 @@ import java.lang.reflect.Field;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.eclipse.jetty.server.Handler;
-import org.eclipse.jetty.server.handler.DefaultHandler;
-import org.eclipse.jetty.server.handler.HandlerCollection;
-import org.eclipse.jetty.servlet.ServletHandler;
+import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.servlet.DefaultServlet;
+import org.eclipse.jetty.servlet.ServletContextHandler;
 
 import org.reflections.Reflections;
 import org.slf4j.Logger;
@@ -16,7 +15,7 @@ import org.slf4j.LoggerFactory;
 
 
 /**
- * Builds Jetty JettyHandlers based on annotations.
+ * Builds Jetty JettyContext based on annotations.
  */
 public class HandlerBuilder {
     private static final Logger LOG = LoggerFactory.getLogger( HandlerBuilder.class );
@@ -29,22 +28,20 @@ public class HandlerBuilder {
      * @param packageBase the package base to start scanning from
      * @return the handler collection
      */
-    public Handler buildForLauncher( String packageBase ) {
-        HandlerCollection collection = new HandlerCollection();
-
+    public ServletContextHandler buildForLauncher( String packageBase, Server server ) {
         Reflections reflections = new Reflections( packageBase );
         Set<Class<? extends Launcher>> classes = reflections.getSubTypesOf( Launcher.class );
         Set<Class<? extends Launcher>> matching = new HashSet<Class<? extends Launcher>>();
 
         for ( Class<? extends Launcher> launcherClass : classes ) {
-            if ( launcherClass.isAnnotationPresent( JettyHandlers.class ) ) {
+            if ( launcherClass.isAnnotationPresent( JettyContext.class ) ) {
                 matching.add( launcherClass );
             }
         }
 
         if ( matching.size() > 1 ) {
             StringBuilder sb = new StringBuilder();
-            sb.append( "Cannot have more than one Launcher annotated with @JettyHandlers\n" );
+            sb.append( "Cannot have more than one Launcher annotated with @JettyContext\n" );
 
             for ( Class<? extends Launcher> laucherClass : matching ) {
                 sb.append( "\t ==> " ).append( laucherClass.getName() ).append( "\n" );
@@ -54,26 +51,12 @@ public class HandlerBuilder {
         }
 
         if ( matching.size() == 0 ) {
-            throw new RuntimeException( "Could not find a Launcher with @JettyHandlers annotation." );
+            throw new RuntimeException( "Could not find a Launcher with @JettyContext annotation." );
         }
 
         Class<? extends Launcher> launcherClass = matching.iterator().next();
-        JettyHandlers handlers = launcherClass.getAnnotation( JettyHandlers.class );
-
-        for ( ServletMapping mapping : handlers.servletMappings() ) {
-            ServletHandler handler = new ServletHandler();
-            handler.addServletWithMapping( mapping.servlet(), mapping.spec() );
-            collection.addHandler( handler );
-        }
-
-        for ( FilterMapping mapping : handlers.filterMappings() ) {
-            ServletHandler handler = new ServletHandler();
-            handler.addFilterWithMapping( mapping.filter(), mapping.spec(), null );
-            collection.addHandler( handler );
-        }
-
-        collection.addHandler( new DefaultHandler() );
-        return collection;
+        JettyContext contextAnnotation = launcherClass.getAnnotation( JettyContext.class );
+        return build( contextAnnotation, server );
     }
 
 
@@ -84,37 +67,52 @@ public class HandlerBuilder {
      * @param testClass the test class to scan
      * @return the collection of handlers
      */
-    public Handler build( Class testClass ) {
-        HandlerCollection collection = new HandlerCollection();
-
+    public ServletContextHandler build( Class testClass, Server server) {
         // Check to make sure we have a JettyResource field
         Field jettyResource = getJettyResource( testClass );
         if ( jettyResource == null ) {
-            LOG.warn( "There's no JettyResource rule on class {}", testClass );
-            return collection;
+            throw new IllegalStateException( "There's no JettyResource rule on class " + testClass );
         }
 
-        // Check to see that we have a JettyHandlers annotation on JettyResource field
-        JettyHandlers handlersAnnotation = jettyResource.getAnnotation( JettyHandlers.class );
-        if ( handlersAnnotation == null ) {
-            LOG.warn( "There's no JettyHandlers annotation on JettyResource field of testClass {}", testClass );
-            return collection;
+        // Check to see that we have a JettyContext annotation on JettyResource field
+        JettyContext contextAnnotation = jettyResource.getAnnotation( JettyContext.class );
+        if ( contextAnnotation == null ) {
+            throw new IllegalStateException( "There's no JettyContext annotation on " +
+                    "JettyResource field of testClass " + testClass );
         }
 
-        for ( ServletMapping mapping : handlersAnnotation.servletMappings() ) {
-            ServletHandler handler = new ServletHandler();
-            handler.addServletWithMapping( mapping.servlet(), mapping.spec() );
-            collection.addHandler( handler );
+        // setup the servlet context
+        return build( contextAnnotation, server );
+    }
+
+
+    public ServletContextHandler build( JettyContext contextAnnotation, Server server) {
+        ServletContextHandler handler = new ServletContextHandler( server, contextAnnotation.contextRoot() );
+
+        if ( contextAnnotation.servletMappings().length == 0 ) {
+            handler.addServlet( DefaultServlet.class, "/" );
+        }
+        else {
+            for ( ServletMapping mapping : contextAnnotation.servletMappings() ) {
+                handler.addServlet( mapping.servlet(), mapping.spec() );
+            }
         }
 
-        for ( FilterMapping mapping : handlersAnnotation.filterMappings() ) {
-            ServletHandler handler = new ServletHandler();
-            handler.addFilterWithMapping( mapping.filter(), mapping.spec(), null );
-            collection.addHandler( handler );
+        for ( FilterMapping mapping : contextAnnotation.filterMappings() ) {
+            handler.addFilter( mapping.filter(), mapping.spec(), null );//EnumSet.allOf( DispatcherType.class ) );
         }
 
-        collection.addHandler( new DefaultHandler() );
-        return collection;
+        for ( ContextListener contextListener : contextAnnotation.contextListeners() ) {
+            try {
+                handler.addEventListener( contextListener.listener().newInstance() );
+            }
+            catch ( Exception e ) {
+                throw new RuntimeException( "Failed to instantiate listener: "
+                        + contextListener.listener(), e );
+            }
+        }
+
+        return handler;
     }
 
 
