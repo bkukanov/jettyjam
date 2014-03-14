@@ -96,9 +96,17 @@ public class JettyJarResource implements TestRule {
             @Override
             public void run() {
                 try {
-                    // this will block until we get an output line from stderr
-                    pidFilePath = in.readLine();
-                    LOG.info( "Got pidFilePath {} from application CLI", pidFilePath );
+                    while ( true ) {
+                        // this will block until we get an output line from stderr
+                        pidFilePath = in.readLine();
+
+                        if ( foundPidFile() ) {
+                            LOG.info( "Got pidFilePath {} from application CLI", pidFilePath );
+                            return;
+                        }
+
+                        LOG.info( "Application output: {}", pidFilePath );
+                    }
                 }
                 catch ( IOException e ) {
                     LOG.error( "Failure while reading from standard input", e );
@@ -109,13 +117,7 @@ public class JettyJarResource implements TestRule {
         });
         t.start();
 
-        // issue the command to get the pid file path from application
-        out = new PrintWriter( process.getOutputStream() );
-        out.println( Launcher.PID_FILE );
-        out.flush();
-
-        // wait until the thread above completes and we get the pidFilePath path
-        t.join( 1000 );
+        issuePidFileCommand( t );
 
         if ( pidFilePath == null ) {
             out.close();
@@ -132,6 +134,24 @@ public class JettyJarResource implements TestRule {
 
         port = Integer.parseInt( appProperties.getProperty( Launcher.SERVER_PORT ) );
         hostname = "localhost";
+    }
+
+
+    private boolean foundPidFile() {
+        return pidFilePath != null && pidFilePath.startsWith( "/" ) && pidFilePath.endsWith( ".pid" );
+    }
+
+
+    private void issuePidFileCommand( Thread t ) throws InterruptedException {
+        while ( ! foundPidFile() ) {
+            // issue the command to get the pid file path from application
+            out = new PrintWriter( process.getOutputStream() );
+            out.println( Launcher.PID_FILE );
+            out.flush();
+
+            // wait until the thread above completes and we get the pidFilePath path
+            t.join( 1000 );
+        }
     }
 
 

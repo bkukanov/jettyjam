@@ -11,10 +11,10 @@ import com.google.inject.servlet.GuiceServletContextListener;
 /**
  * A application context listener for Guice.
  */
-public class JjjContextListener extends GuiceServletContextListener {
+public class VaadinContextListener extends GuiceServletContextListener {
     @Override
     protected Injector getInjector() {
-        return Guice.createInjector( new JjjModule() );
+        return Guice.createInjector( new VaadinModule() );
     }
 
 

@@ -16,6 +16,7 @@ import java.lang.annotation.Target;
 @Inherited
 public @interface JettyContext {
     String contextRoot() default "/";
+    boolean enableSession() default false;
     ServletMapping[] servletMappings() default {};
     FilterMapping[] filterMappings() default {};
     ContextListener[] contextListeners() default {};

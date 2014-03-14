@@ -3,6 +3,7 @@ package org.safehaus.embedded.jetty.vaadin;
 
 import javax.ws.rs.core.MediaType;
 
+import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.safehaus.embedded.jetty.utils.JettyJarResource;
@@ -23,8 +24,8 @@ public class EmbeddedAppIT {
     private final static Logger LOG = LoggerFactory.getLogger( EmbeddedAppIT.class );
 
 
-    @Rule
-    public JettyJarResource app = new JettyJarResource();
+    @ClassRule
+    public static JettyJarResource app = new JettyJarResource();
 
     @Test
     public void testEmbeddedApp() throws Exception {
@@ -34,10 +35,10 @@ public class EmbeddedAppIT {
         Client client = Client.create( clientConfig );
         String result = client
                 .resource( app.getAppProperties().getProperty( Launcher.SERVER_URL ) )
-                .path( "/" )
-                .accept( MediaType.TEXT_PLAIN )
+                .path( FooResource.ENDPOINT_URL )
+                .accept( MediaType.APPLICATION_JSON )
                 .get( String.class );
 
-        assertEquals( HelloWorldServlet.MESSAGE, result );
+        assertEquals( FooResource.JSON_MESSAGE, result );
     }
 }

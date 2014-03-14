@@ -9,6 +9,7 @@ import java.util.Set;
 import javax.servlet.DispatcherType;
 
 import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.session.SessionHandler;
 import org.eclipse.jetty.servlet.DefaultServlet;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 
@@ -113,6 +114,10 @@ public class HandlerBuilder {
                 throw new RuntimeException( "Failed to instantiate listener: "
                         + contextListener.listener(), e );
             }
+        }
+
+        if ( contextAnnotation.enableSession() )  {
+            handler.setSessionHandler( new SessionHandler() );
         }
 
         return handler;

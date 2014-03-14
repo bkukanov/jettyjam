@@ -3,12 +3,13 @@ package org.safehaus.embedded.jetty.vaadin;
 
 import javax.ws.rs.core.MediaType;
 
-import org.junit.Rule;
+import org.junit.ClassRule;
 import org.junit.Test;
 import org.safehaus.embedded.jetty.utils.ContextListener;
 import org.safehaus.embedded.jetty.utils.FilterMapping;
 import org.safehaus.embedded.jetty.utils.JettyContext;
 import org.safehaus.embedded.jetty.utils.JettyResource;
+import org.safehaus.embedded.jetty.utils.ServletMapping;
 
 import com.google.inject.servlet.GuiceFilter;
 import com.sun.jersey.api.client.Client;
@@ -23,15 +24,19 @@ import static junit.framework.TestCase.assertEquals;
 public class EmbeddedAppTest {
 
     @JettyContext(
+        enableSession = true,
+        servletMappings = {
+            @ServletMapping( servlet = UIServlet.class, spec = "/VAADIN/*" )
+        },
         contextListeners = {
-            @ContextListener( listener = JjjContextListener.class )
+            @ContextListener( listener = VaadinContextListener.class )
         },
         filterMappings = {
             @FilterMapping( filter = GuiceFilter.class, spec = "/*" )
         }
     )
-    @Rule
-    public JettyResource service = new JettyResource();
+    @ClassRule
+    public static JettyResource service = new JettyResource();
 
 
     @Test
