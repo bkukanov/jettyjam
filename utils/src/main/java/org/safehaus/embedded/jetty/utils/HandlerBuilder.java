@@ -2,8 +2,11 @@ package org.safehaus.embedded.jetty.utils;
 
 
 import java.lang.reflect.Field;
+import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.Set;
+
+import javax.servlet.DispatcherType;
 
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.DefaultServlet;
@@ -99,7 +102,7 @@ public class HandlerBuilder {
         }
 
         for ( FilterMapping mapping : contextAnnotation.filterMappings() ) {
-            handler.addFilter( mapping.filter(), mapping.spec(), null );//EnumSet.allOf( DispatcherType.class ) );
+            handler.addFilter( mapping.filter(), mapping.spec(), EnumSet.allOf( DispatcherType.class ) );
         }
 
         for ( ContextListener contextListener : contextAnnotation.contextListeners() ) {
