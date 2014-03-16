@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.net.URL;
 import java.util.Properties;
 
 import org.junit.rules.TestRule;
@@ -25,6 +26,8 @@ import org.slf4j.LoggerFactory;
  */
 public class JettyJarResource implements TestRule {
     public static final String RESOURCE_FILE = "JettyJarResource.properties";
+
+    private static final String REMOTE_DEBUG = "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=";
     private static final Logger LOG = LoggerFactory.getLogger( JettyJarResource.class );
 
     public static final String JAR_FILE_PATH_KEY = "jar.file.path";
@@ -35,7 +38,9 @@ public class JettyJarResource implements TestRule {
     private String pidFilePath;
     private Properties appProperties;
     private String hostname;
+    private URL serverUrl;
     private int port;
+    private int debugPort = -1;
 
 
     /**
@@ -50,6 +55,12 @@ public class JettyJarResource implements TestRule {
         catch ( IOException e ) {
             throw new RuntimeException( e );
         }
+    }
+
+
+    public JettyJarResource( int debugPort ) {
+        this();
+        this.debugPort = debugPort;
     }
 
 
@@ -87,7 +98,15 @@ public class JettyJarResource implements TestRule {
             throw new FileNotFoundException( "Cannot find jar file: " + jarFile.getCanonicalPath() );
         }
 
-        String[] execArgs = { "java", "-jar", jarFile.getCanonicalPath() };
+        String[] execArgs;
+        if ( debugPort > 0 ) {
+            execArgs = new String[] { "java", "-jar", jarFile.getCanonicalPath() };
+        }
+        else {
+            execArgs = new String[] { "java", REMOTE_DEBUG + debugPort, "-jar", jarFile.getCanonicalPath() };
+        }
+
+
         process = Runtime.getRuntime().exec( execArgs );
 
         // the path to the pidFilePath will be output from the stderr stream
@@ -134,6 +153,7 @@ public class JettyJarResource implements TestRule {
 
         port = Integer.parseInt( appProperties.getProperty( Launcher.SERVER_PORT ) );
         hostname = "localhost";
+        serverUrl = new URL( appProperties.getProperty( Launcher.SERVER_URL ) );
     }
 
 
@@ -197,5 +217,10 @@ public class JettyJarResource implements TestRule {
 
     public int getPort() {
         return port;
+    }
+
+
+    public URL getServerUrl() {
+        return serverUrl;
     }
 }

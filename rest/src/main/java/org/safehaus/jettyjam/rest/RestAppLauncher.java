@@ -1,6 +1,7 @@
 package org.safehaus.jettyjam.rest;
 
 
+import org.safehaus.embedded.jetty.utils.ContextListener;
 import org.safehaus.embedded.jetty.utils.FilterMapping;
 import org.safehaus.embedded.jetty.utils.JettyContext;
 import org.safehaus.embedded.jetty.utils.ServletMapping;
@@ -12,7 +13,8 @@ import com.google.inject.servlet.GuiceFilter;
  * A simple JettyLauncher.
  */
 @JettyContext(
-    servletMappings = { @ServletMapping( servlet = HelloWorldServlet.class, spec = "/*" ) },
+    contextListeners = { @ContextListener( listener = RestAppContextListener.class ) },
+//    servletMappings = { @ServletMapping( servlet = HelloWorldServlet.class, spec = "/*" ) },
     filterMappings = { @FilterMapping( filter = GuiceFilter.class, spec = "/*") }
 )
 public class RestAppLauncher extends org.safehaus.embedded.jetty.utils.Launcher {

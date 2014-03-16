@@ -27,6 +27,7 @@ public class RestAppModule extends JerseyServletModule {
         bind( JacksonJsonProvider.class ).asEagerSingleton();
 
         bind( FooResource.class ).asEagerSingleton();
+        bind( UploadResource.class ).asEagerSingleton();
 
         Map<String, String> params = new HashMap<String, String>();
         params.put( PACKAGES_KEY, getClass().getPackage().toString() );

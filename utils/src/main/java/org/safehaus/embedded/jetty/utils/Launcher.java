@@ -51,7 +51,9 @@ public abstract class Launcher {
 
 
     protected Launcher( String appName, ClassLoader cl ) {
-        classLoader = cl;
+        classLoader = ClassLoader.getSystemClassLoader();
+//        classLoader = cl;
+        Thread.currentThread().setContextClassLoader( ClassLoader.getSystemClassLoader() );
         server = new Server();
         appId = UUID.randomUUID();
         this.appName = appName;

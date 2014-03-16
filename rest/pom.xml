@@ -62,6 +62,25 @@
         </executions>
       </plugin>
 
+      <!--
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <configuration>
+          <archive>
+            <manifest>
+              <mainClass>org.safehaus.jettyjam.rest.RestAppLauncher</mainClass>
+              <packageName>org.safehaus.jettyjam.rest</packageName>
+            </manifest>
+            <manifestEntries>
+              <mode>development</mode>
+              <url>${project.url}</url>
+            </manifestEntries>
+          </archive>
+        </configuration>
+      </plugin>
+      -->
+
       <plugin>
         <artifactId>maven-assembly-plugin</artifactId>
         <executions>
@@ -81,7 +100,7 @@
           <archive>
             <manifest>
               <mainClass>org.safehaus.jettyjam.rest.RestAppLauncher</mainClass>
-              <packageName>org.safehaus.embedded.jetty.jjj</packageName>
+              <packageName>org.safehaus.jettyjam.rest</packageName>
             </manifest>
             <manifestEntries>
               <mode>development</mode>
@@ -128,6 +147,11 @@
     <dependency>
       <groupId>com.sun.jersey.contribs</groupId>
       <artifactId>jersey-guice</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>com.sun.jersey.contribs</groupId>
+      <artifactId>jersey-multipart</artifactId>
     </dependency>
 
     <dependency>
