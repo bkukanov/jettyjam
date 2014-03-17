@@ -34,7 +34,7 @@ public class RestAppIT {
     public static JettyJarResource app = new JettyJarResource( 5005 );
 
 
-    @Test
+//    @Test
     public void testEmbeddedApp() throws Exception {
         LOG.info( "integration testing embedded jetty application executable jar file" );
 
@@ -50,7 +50,7 @@ public class RestAppIT {
     }
 
 
-    @Test
+//    @Test
     public void testFooResource() {
         DefaultClientConfig clientConfig = new DefaultClientConfig();
         Client client = Client.create( clientConfig );

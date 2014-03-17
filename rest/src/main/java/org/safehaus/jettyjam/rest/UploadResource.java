@@ -16,68 +16,60 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.inject.Singleton;
-import com.sun.jersey.multipart.FormDataParam;
-
+import javax.mail.internet.MimeMultipart;
 
 /**
  * REST operation to upload (a.k.a. deploy) a project war file.
  */
 @Singleton
-@Produces( MediaType.APPLICATION_JSON )
-@Path( UploadResource.ENDPOINT_URL )
+@Produces(MediaType.APPLICATION_JSON)
+@Path(UploadResource.ENDPOINT_URL)
 public class UploadResource {
+
     public final static String ENDPOINT_URL = "/upload";
-    private final static Logger LOG = LoggerFactory.getLogger( UploadResource.class );
+    private final static Logger LOG = LoggerFactory.getLogger(UploadResource.class);
     public static final String FILENAME_PARAM = "file";
     public static final String CONTENT = "content";
 
-
     @POST
-    @Consumes( MediaType.MULTIPART_FORM_DATA )
-    public Response upload(
-            @FormDataParam( CONTENT ) java.io.InputStream in,
-            @FormDataParam( FILENAME_PARAM ) String fileName )
-    {
-        LOG.warn( "upload called ..." );
-        LOG.info( "fileDetails = " + fileName );
-
-        // handle the upload of the war file to some path on the file system
-        String fileLocation = /* config.getWarUploadPath() + */ fileName;
-        writeToFile( in, fileLocation );
-
-        return Response.status( Response.Status.CREATED ).entity( fileLocation ).build();
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    public Response upload(MimeMultipart multipart) {
+        try {
+            String filename = multipart.getBodyPart(0).getContent().toString();
+            LOG.warn("FILENAME: " + filename);
+            LOG.warn("CONTENT: " + convertStreamToString(multipart.getBodyPart(1).getInputStream()));
+        } catch (Exception ex) {
+            LOG.error("upload", ex);
+        }
+        return Response.status(Response.Status.CREATED).entity("ok").build();
     }
 
+    static String convertStreamToString(java.io.InputStream is) {
+        java.util.Scanner s = new java.util.Scanner(is).useDelimiter("\\A");
+        return s.hasNext() ? s.next() : "";
+    }
 
-    private void writeToFile( InputStream in, String fileLocation )
-    {
+    private void writeToFile(InputStream in, String fileLocation) {
         OutputStream out = null;
 
-        try
-        {
+        try {
             int read;
             byte[] bytes = new byte[1024];
 
-            out = new FileOutputStream( fileLocation );
+            out = new FileOutputStream(fileLocation);
 
-            while ( ( read = in.read( bytes ) ) != -1 )
-            {
-                out.write( bytes, 0, read );
+            while ((read = in.read(bytes)) != -1) {
+                out.write(bytes, 0, read);
             }
             out.flush();
-        }
-        catch ( IOException e )
-        {
-            LOG.error( "Failed to write out file: " + fileLocation, e );
-        }
-        finally
-        {
-            if ( out != null ) {
+        } catch (IOException e) {
+            LOG.error("Failed to write out file: " + fileLocation, e);
+        } finally {
+            if (out != null) {
                 try {
                     out.close();
-                }
-                catch ( IOException e ) {
-                    LOG.error( "Failed while trying to close output stream for {}", fileLocation );
+                } catch (IOException e) {
+                    LOG.error("Failed while trying to close output stream for {}", fileLocation);
                 }
             }
         }
