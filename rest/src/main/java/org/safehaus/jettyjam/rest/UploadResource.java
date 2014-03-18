@@ -16,6 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.inject.Singleton;
+import javax.mail.MessagingException;
 import javax.mail.internet.MimeMultipart;
 
 /**
@@ -37,8 +38,13 @@ public class UploadResource {
         try {
             String filename = multipart.getBodyPart(0).getContent().toString();
             LOG.warn("FILENAME: " + filename);
-            LOG.warn("CONTENT: " + convertStreamToString(multipart.getBodyPart(1).getInputStream()));
-        } catch (Exception ex) {
+//            LOG.warn("CONTENT: " + convertStreamToString());
+            InputStream in = multipart.getBodyPart(1).getInputStream();
+            String fileLocation = "/home/bahadyr/temp/" + filename;
+            writeToFile(in, fileLocation);
+        } catch (MessagingException ex) {
+            LOG.error("upload", ex);
+        } catch (IOException ex) {
             LOG.error("upload", ex);
         }
         return Response.status(Response.Status.CREATED).entity("ok").build();
