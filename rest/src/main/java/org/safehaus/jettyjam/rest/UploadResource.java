@@ -38,9 +38,8 @@ public class UploadResource {
         try {
             String filename = multipart.getBodyPart(0).getContent().toString();
             LOG.warn("FILENAME: " + filename);
-//            LOG.warn("CONTENT: " + convertStreamToString());
             InputStream in = multipart.getBodyPart(1).getInputStream();
-            String fileLocation = "/home/bahadyr/temp/" + filename;
+            String fileLocation = /* config.getWarUploadPath() + */ filename;
             writeToFile(in, fileLocation);
         } catch (MessagingException ex) {
             LOG.error("upload", ex);
@@ -48,11 +47,6 @@ public class UploadResource {
             LOG.error("upload", ex);
         }
         return Response.status(Response.Status.CREATED).entity("ok").build();
-    }
-
-    static String convertStreamToString(java.io.InputStream is) {
-        java.util.Scanner s = new java.util.Scanner(is).useDelimiter("\\A");
-        return s.hasNext() ? s.next() : "";
     }
 
     private void writeToFile(InputStream in, String fileLocation) {
