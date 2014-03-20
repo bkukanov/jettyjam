@@ -37,16 +37,17 @@ public class UploadResource {
     public Response upload(MimeMultipart multipart) {
         try {
             String filename = multipart.getBodyPart(0).getContent().toString();
-            LOG.warn("FILENAME: " + filename);
             InputStream in = multipart.getBodyPart(1).getInputStream();
             String fileLocation = /* config.getWarUploadPath() + */ filename;
             writeToFile(in, fileLocation);
-        } catch (MessagingException ex) {
-            LOG.error("upload", ex);
+            return Response.status(Response.Status.CREATED).entity(filename).build();
         } catch (IOException ex) {
-            LOG.error("upload", ex);
+            LOG.error(ex.getMessage());
+        } catch (MessagingException ex) {
+            LOG.error(ex.getMessage());
         }
-        return Response.status(Response.Status.CREATED).entity("ok").build();
+        return Response.status(Response.Status.BAD_REQUEST).build();
+
     }
 
     private void writeToFile(InputStream in, String fileLocation) {
