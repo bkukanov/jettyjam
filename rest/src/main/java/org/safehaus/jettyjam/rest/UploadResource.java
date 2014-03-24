@@ -34,6 +34,7 @@ public class UploadResource {
     public static final String FILENAME_PARAM = "file";
     public static final String CONTENT = "content";
 
+
     @POST
     @Consumes( MediaType.MULTIPART_FORM_DATA )
     public Response upload(
