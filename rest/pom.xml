@@ -93,6 +93,7 @@
               <goal>shade</goal>
             </goals>
             <configuration>
+              <finalName>${project.artifactId}-${project.version}</finalName>
               <artifactSet>
                 <includes>
                   <include>org.safehaus.jettyjam:utils</include>
@@ -104,9 +105,7 @@
                   <mainClass>org.safehaus.embedded.jetty.utils.JarRunner</mainClass>
                   <manifestEntries>
                     <Bundle-MainClass>org.safehaus.jettyjam.rest.RestAppJettyRunner</Bundle-MainClass>
-                    <mainClass>org.safehaus.embedded.jetty.utils.JarRunner</mainClass>
                     <packageName>org.safehaus.embedded.jetty.utils</packageName>
-                    <Build-Number>123</Build-Number>
                   </manifestEntries>
                 </transformer>
               </transformers>
@@ -114,26 +113,6 @@
           </execution>
         </executions>
       </plugin>
-
-      <!--
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-jar-plugin</artifactId>
-        <configuration>
-          <archive>
-            <manifest>
-              <mainClass>org.safehaus.embedded.jetty.utils.JettyRunnerner</mainClass>
-              <packageName>org.safehaus.embedded.jetty.utils</packageName>
-            </manifest>
-            <manifestEntries>
-              <Bundle-MainClass>org.safehaus.jettyjam.rest.RestAppJettyRunnerner</Bundle-MainClass>
-              <mode>development</mode>
-              <url>${project.url}</url>
-            </manifestEntries>
-          </archive>
-        </configuration>
-      </plugin>
-      -->
     </plugins>
   </build>
 

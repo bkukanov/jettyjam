@@ -26,6 +26,7 @@
           <include>**/*.properties</include>
         </includes>
       </resource>
+
       <resource>
         <directory>src/main/resources</directory>
         <filtering>false</filtering>
@@ -72,32 +73,54 @@
       </plugin>
 
       <plugin>
-        <artifactId>maven-assembly-plugin</artifactId>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <version>2.8</version>
+        <executions>
+          <execution>
+            <id>copy</id>
+            <phase>prepare-package</phase>
+            <goals>
+              <goal>copy-dependencies</goal>
+            </goals>
+            <configuration>
+              <excludeTransitive>false</excludeTransitive>
+              <outputDirectory>${project.build.directory}/classes</outputDirectory>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-shade-plugin</artifactId>
+        <version>2.2</version>
         <executions>
           <execution>
             <phase>package</phase>
             <goals>
-              <goal>attached</goal>
+              <goal>shade</goal>
             </goals>
+            <configuration>
+              <finalName>${project.artifactId}-${project.version}</finalName>
+              <artifactSet>
+                <includes>
+                  <include>org.safehaus.jettyjam:utils</include>
+                </includes>
+              </artifactSet>
+              <transformers>
+                <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
+                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                  <mainClass>org.safehaus.embedded.jetty.utils.JarRunner</mainClass>
+                  <manifestEntries>
+                    <Bundle-MainClass>org.safehaus.jettyjam.https.SecureAppJettyRunner</Bundle-MainClass>
+                    <packageName>org.safehaus.embedded.jetty.utils</packageName>
+                  </manifestEntries>
+                </transformer>
+              </transformers>
+            </configuration>
           </execution>
         </executions>
-        <configuration>
-          <appendAssemblyId>false</appendAssemblyId>
-          <finalName>${project.artifactId}-${project.version}</finalName>
-          <descriptorRefs>
-            <descriptorRef>jar-with-dependencies</descriptorRef>
-          </descriptorRefs>
-          <archive>
-            <manifest>
-              <mainClass>org.safehaus.jettyjam.https.SecureAppJettyRunner</mainClass>
-              <packageName>org.safehaus.embedded.jetty.https</packageName>
-            </manifest>
-            <manifestEntries>
-              <mode>development</mode>
-              <url>${pom.url}</url>
-            </manifestEntries>
-          </archive>
-        </configuration>
       </plugin>
     </plugins>
   </build>

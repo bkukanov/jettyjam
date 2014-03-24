@@ -42,7 +42,7 @@ public class UploadResource {
             @FormDataParam( CONTENT ) InputStream in )
     {
         writeToFile( in, filename );
-        return Response.status(Response.Status.CREATED).entity("ok").build();
+        return Response.status( Response.Status.CREATED ).entity( filename ).build();
     }
 
 

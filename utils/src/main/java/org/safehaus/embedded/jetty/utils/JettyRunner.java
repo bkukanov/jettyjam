@@ -19,7 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
-/** A Jetty JettyRunner. */
+/** A Jetty launcher. */
 public abstract class JettyRunner {
     private static final Logger LOG = LoggerFactory.getLogger( JettyRunner.class );
 
