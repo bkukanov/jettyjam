@@ -64,32 +64,55 @@
       </plugin>
 
       <plugin>
-        <artifactId>maven-assembly-plugin</artifactId>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <version>2.8</version>
+        <executions>
+          <execution>
+            <id>copy</id>
+            <phase>prepare-package</phase>
+            <goals>
+              <goal>copy-dependencies</goal>
+            </goals>
+            <configuration>
+              <excludeTransitive>false</excludeTransitive>
+              <outputDirectory>${project.build.directory}/classes</outputDirectory>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-shade-plugin</artifactId>
+        <version>2.2</version>
         <executions>
           <execution>
             <phase>package</phase>
             <goals>
-              <goal>attached</goal>
+              <goal>shade</goal>
             </goals>
+            <configuration>
+              <finalName>${project.artifactId}-${project.version}</finalName>
+              <createDependencyReducedPom>false</createDependencyReducedPom>
+              <artifactSet>
+                <includes>
+                  <include>org.safehaus.jettyjam:utils</include>
+                </includes>
+              </artifactSet>
+              <transformers>
+                <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
+                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                  <mainClass>org.safehaus.embedded.jetty.utils.JarRunner</mainClass>
+                  <manifestEntries>
+                    <Bundle-MainClass>org.safehaus.jettyjam.vaadin.VaadinAppJettyRunner</Bundle-MainClass>
+                    <packageName>org.safehaus.embedded.jetty.utils</packageName>
+                  </manifestEntries>
+                </transformer>
+              </transformers>
+            </configuration>
           </execution>
         </executions>
-        <configuration>
-          <appendAssemblyId>false</appendAssemblyId>
-          <finalName>${project.artifactId}-${project.version}</finalName>
-          <descriptorRefs>
-            <descriptorRef>jar-with-dependencies</descriptorRef>
-          </descriptorRefs>
-          <archive>
-            <manifest>
-              <mainClass>org.safehaus.jettyjam.vaadin.VaadinAppJettyRunner</mainClass>
-              <packageName>org.safehaus.embedded.jetty.vaadin</packageName>
-            </manifest>
-            <manifestEntries>
-              <mode>development</mode>
-              <url>${pom.url}</url>
-            </manifestEntries>
-          </archive>
-        </configuration>
       </plugin>
     </plugins>
   </build>
@@ -132,6 +155,11 @@
     </dependency>
 
     <dependency>
+      <groupId>com.sun.jersey.contribs</groupId>
+      <artifactId>jersey-multipart</artifactId>
+    </dependency>
+
+    <dependency>
       <groupId>com.google.inject</groupId>
       <artifactId>guice</artifactId>
     </dependency>
@@ -164,6 +192,13 @@
     <dependency>
       <groupId>com.vaadin</groupId>
       <artifactId>vaadin-themes</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>javax.mail</groupId>
+      <artifactId>mail</artifactId>
+      <version>1.4.5</version>
+      <type>jar</type>
     </dependency>
 
     <!-- Test Dependencies -->
