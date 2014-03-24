@@ -4,9 +4,7 @@ package org.safehaus.embedded.jetty.utils;
 import java.lang.reflect.Field;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import org.eclipse.jetty.server.HttpConfiguration;
 import org.eclipse.jetty.server.HttpConnectionFactory;
@@ -15,7 +13,7 @@ import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.server.SslConnectionFactory;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
-import org.reflections.Reflections;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -67,31 +65,18 @@ public class ConnectorBuilder {
     }
 
 
-    public static ServerConnector setConnectors( String packageBase, ClassLoader cl, Server server ) {
-        List<ServerConnector> connectors = new ArrayList<ServerConnector>();
+    public static ServerConnector setConnectors( String subClass, ClassLoader cl, Server server ) {
+        Class<? extends JettyRunner> launcherClass = null;
 
-        Reflections reflections = new Reflections( packageBase );
-        Set<Class<? extends Launcher>> classes = reflections.getSubTypesOf( Launcher.class );
-        Set<Class<? extends Launcher>> matching = new HashSet<Class<? extends Launcher>>();
-
-        for ( Class<? extends Launcher> launcherClass : classes ) {
-            if ( launcherClass.isAnnotationPresent( JettyConnectors.class ) ) {
-                matching.add( launcherClass );
-            }
+        try {
+            //noinspection unchecked
+            launcherClass = ( Class<? extends JettyRunner> ) Class.forName( subClass );
+        }
+        catch ( ClassNotFoundException e ) {
+            throw new RuntimeException( e );
         }
 
-        if ( matching.size() > 1 ) {
-            StringBuilder sb = new StringBuilder();
-            sb.append( "Cannot have more than one Launcher annotated with @JettyConnectors\n" );
-
-            for ( Class<? extends Launcher> laucherClass : matching ) {
-                sb.append( "\t ==> " ).append( laucherClass.getName() ).append( "\n" );
-            }
-
-            throw new RuntimeException( sb.toString() );
-        }
-
-        if ( matching.size() == 0 ) {
+        if ( ! launcherClass.isAnnotationPresent( JettyConnectors.class ) ) {
             LOG.warn( "No connector configuration defined for launchers. " +
                     "Defaulting to an HTTP connector based on an available port." );
 
@@ -101,9 +86,8 @@ public class ConnectorBuilder {
             return connector;
         }
 
-        Class<? extends Launcher> launcherClass = matching.iterator().next();
         JettyConnectors connectorsAnnotation = launcherClass.getAnnotation( JettyConnectors.class );
-        return setConnectors( connectors, cl, connectorsAnnotation, server );
+        return setConnectors( new ArrayList<ServerConnector>(), cl, connectorsAnnotation, server );
     }
 
 

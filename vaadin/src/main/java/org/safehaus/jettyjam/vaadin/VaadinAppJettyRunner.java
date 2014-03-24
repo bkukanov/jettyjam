@@ -4,6 +4,7 @@ package org.safehaus.jettyjam.vaadin;
 import org.safehaus.embedded.jetty.utils.ContextListener;
 import org.safehaus.embedded.jetty.utils.FilterMapping;
 import org.safehaus.embedded.jetty.utils.JettyContext;
+import org.safehaus.embedded.jetty.utils.JettyRunner;
 
 import com.google.inject.servlet.GuiceFilter;
 
@@ -20,21 +21,21 @@ import com.google.inject.servlet.GuiceFilter;
         @FilterMapping( filter = GuiceFilter.class, spec = "/*" )
     }
 )
-public class VaadinAppLauncher extends org.safehaus.embedded.jetty.utils.Launcher {
+public class VaadinAppJettyRunner extends JettyRunner {
 
-    public VaadinAppLauncher() {
-        super( "TestApp", VaadinAppLauncher.class.getClassLoader() );
+    public VaadinAppJettyRunner() {
+        super( "TestApp", VaadinAppJettyRunner.class.getClassLoader() );
     }
 
 
     @Override
-    public String getPackageBase() {
-        return getClass().getPackage().getName();
+    public String getSubClass() {
+        return getClass().getName();
     }
 
 
     public static void main( String [] args ) throws Exception {
-        VaadinAppLauncher launcher = new VaadinAppLauncher();
+        VaadinAppJettyRunner launcher = new VaadinAppJettyRunner();
         launcher.start();
     }
 }

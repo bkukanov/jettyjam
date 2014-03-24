@@ -4,7 +4,7 @@ package org.safehaus.jettyjam.rest;
 import org.safehaus.embedded.jetty.utils.ContextListener;
 import org.safehaus.embedded.jetty.utils.FilterMapping;
 import org.safehaus.embedded.jetty.utils.JettyContext;
-import org.safehaus.embedded.jetty.utils.ServletMapping;
+import org.safehaus.embedded.jetty.utils.JettyRunner;
 
 import com.google.inject.servlet.GuiceFilter;
 
@@ -14,24 +14,23 @@ import com.google.inject.servlet.GuiceFilter;
  */
 @JettyContext(
     contextListeners = { @ContextListener( listener = RestAppContextListener.class ) },
-//    servletMappings = { @ServletMapping( servlet = HelloWorldServlet.class, spec = "/*" ) },
     filterMappings = { @FilterMapping( filter = GuiceFilter.class, spec = "/*") }
 )
-public class RestAppLauncher extends org.safehaus.embedded.jetty.utils.Launcher {
+public class RestAppJettyRunner extends JettyRunner {
 
-    public RestAppLauncher() {
-        super( "TestApp", RestAppLauncher.class.getClassLoader() );
+    public RestAppJettyRunner() {
+        super( "TestApp", RestAppJettyRunner.class.getClassLoader() );
     }
 
 
     @Override
-    public String getPackageBase() {
-        return getClass().getPackage().getName();
+    public String getSubClass() {
+        return getClass().getName();
     }
 
 
     public static void main( String [] args ) throws Exception {
-        RestAppLauncher launcher = new RestAppLauncher();
+        RestAppJettyRunner launcher = new RestAppJettyRunner();
         launcher.start();
     }
 }

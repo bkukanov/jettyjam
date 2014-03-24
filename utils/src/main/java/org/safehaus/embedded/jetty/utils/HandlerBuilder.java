@@ -3,8 +3,6 @@ package org.safehaus.embedded.jetty.utils;
 
 import java.lang.reflect.Field;
 import java.util.EnumSet;
-import java.util.HashSet;
-import java.util.Set;
 
 import javax.servlet.DispatcherType;
 
@@ -13,7 +11,6 @@ import org.eclipse.jetty.server.session.SessionHandler;
 import org.eclipse.jetty.servlet.DefaultServlet;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 
-import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,37 +26,25 @@ public class HandlerBuilder {
      * Builds a collection of handlers by scanning from a package base for annotated Jetty
      * web components.
      *
-     * @param packageBase the package base to start scanning from
+     * @param className the name of the class to get annotations from
      * @return the handler collection
      */
-    public ServletContextHandler buildForLauncher( String packageBase, Server server ) {
-        Reflections reflections = new Reflections( packageBase );
-        Set<Class<? extends Launcher>> classes = reflections.getSubTypesOf( Launcher.class );
-        Set<Class<? extends Launcher>> matching = new HashSet<Class<? extends Launcher>>();
+    public ServletContextHandler buildForLauncher( String className, Server server ) {
+        Class launcherClass = null;
 
-        for ( Class<? extends Launcher> launcherClass : classes ) {
-            if ( launcherClass.isAnnotationPresent( JettyContext.class ) ) {
-                matching.add( launcherClass );
-            }
+        try {
+            launcherClass = Class.forName( className );
+        }
+        catch ( Exception e ) {
+            throw new RuntimeException( e );
         }
 
-        if ( matching.size() > 1 ) {
-            StringBuilder sb = new StringBuilder();
-            sb.append( "Cannot have more than one Launcher annotated with @JettyContext\n" );
-
-            for ( Class<? extends Launcher> laucherClass : matching ) {
-                sb.append( "\t ==> " ).append( laucherClass.getName() ).append( "\n" );
-            }
-
-            throw new RuntimeException( sb.toString() );
+        if ( ! launcherClass.isAnnotationPresent( JettyContext.class ) ) {
+            throw new RuntimeException( "JettyRunner " + launcherClass + " not annotated with @JettyContext." );
         }
 
-        if ( matching.size() == 0 ) {
-            throw new RuntimeException( "Could not find a Launcher with @JettyContext annotation." );
-        }
 
-        Class<? extends Launcher> launcherClass = matching.iterator().next();
-        JettyContext contextAnnotation = launcherClass.getAnnotation( JettyContext.class );
+        JettyContext contextAnnotation = ( JettyContext ) launcherClass.getAnnotation( JettyContext.class );
         return build( contextAnnotation, server );
     }
 

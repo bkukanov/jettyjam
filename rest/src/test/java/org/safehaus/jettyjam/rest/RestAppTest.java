@@ -12,7 +12,7 @@ import org.safehaus.embedded.jetty.utils.ContextListener;
 import org.safehaus.embedded.jetty.utils.FilterMapping;
 import org.safehaus.embedded.jetty.utils.JettyContext;
 import org.safehaus.embedded.jetty.utils.JettyResource;
-import org.safehaus.embedded.jetty.utils.Launcher;
+import org.safehaus.embedded.jetty.utils.JettyRunner;
 
 import com.google.inject.servlet.GuiceFilter;
 import com.sun.jersey.api.client.Client;

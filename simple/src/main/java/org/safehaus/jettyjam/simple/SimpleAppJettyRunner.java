@@ -2,6 +2,7 @@ package org.safehaus.jettyjam.simple;
 
 
 import org.safehaus.embedded.jetty.utils.JettyContext;
+import org.safehaus.embedded.jetty.utils.JettyRunner;
 import org.safehaus.embedded.jetty.utils.ServletMapping;
 
 
@@ -12,21 +13,21 @@ import org.safehaus.embedded.jetty.utils.ServletMapping;
     servletMappings = { @ServletMapping( servlet = HelloWorldServlet.class, spec = "/*" ) },
     filterMappings = {}
 )
-public class SimpleAppLauncher extends org.safehaus.embedded.jetty.utils.Launcher {
+public class SimpleAppJettyRunner extends JettyRunner {
 
-    public SimpleAppLauncher() {
-        super( "TestApp", SimpleAppLauncher.class.getClassLoader() );
+    public SimpleAppJettyRunner() {
+        super( "TestApp", SimpleAppJettyRunner.class.getClassLoader() );
     }
 
 
     @Override
-    public String getPackageBase() {
-        return getClass().getPackage().getName();
+    public String getSubClass() {
+        return getClass().getName();
     }
 
 
     public static void main( String [] args ) throws Exception {
-        SimpleAppLauncher launcher = new SimpleAppLauncher();
+        SimpleAppJettyRunner launcher = new SimpleAppJettyRunner();
         launcher.start();
     }
 }

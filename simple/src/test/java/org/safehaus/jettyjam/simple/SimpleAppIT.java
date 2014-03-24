@@ -6,7 +6,8 @@ import javax.ws.rs.core.MediaType;
 import org.junit.Rule;
 import org.junit.Test;
 import org.safehaus.embedded.jetty.utils.JettyJarResource;
-import org.safehaus.embedded.jetty.utils.Launcher;
+import org.safehaus.embedded.jetty.utils.JettyRunner;
+import org.safehaus.embedded.jetty.utils.JettyRunner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,7 +34,7 @@ public class SimpleAppIT {
         DefaultClientConfig clientConfig = new DefaultClientConfig();
         Client client = Client.create( clientConfig );
         String result = client
-                .resource( app.getAppProperties().getProperty( Launcher.SERVER_URL ) )
+                .resource( app.getAppProperties().getProperty( JettyRunner.SERVER_URL ) )
                 .path( "/" )
                 .accept( MediaType.TEXT_PLAIN )
                 .get( String.class );

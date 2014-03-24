@@ -151,9 +151,9 @@ public class JettyJarResource implements TestRule {
         LOG.info( "Loaded properties file: {}", pidFilePath );
         appProperties.list( System.out );
 
-        port = Integer.parseInt( appProperties.getProperty( Launcher.SERVER_PORT ) );
+        port = Integer.parseInt( appProperties.getProperty( JettyRunner.SERVER_PORT ) );
         hostname = "localhost";
-        serverUrl = new URL( appProperties.getProperty( Launcher.SERVER_URL ) );
+        serverUrl = new URL( appProperties.getProperty( JettyRunner.SERVER_URL ) );
     }
 
 
@@ -166,7 +166,7 @@ public class JettyJarResource implements TestRule {
         while ( ! foundPidFile() ) {
             // issue the command to get the pid file path from application
             out = new PrintWriter( process.getOutputStream() );
-            out.println( Launcher.PID_FILE );
+            out.println( JettyRunner.PID_FILE );
             out.flush();
 
             // wait until the thread above completes and we get the pidFilePath path
@@ -181,7 +181,7 @@ public class JettyJarResource implements TestRule {
             if ( pidFile.exists() && ! pidFile.delete() ) pidFile.deleteOnExit();
         }
 
-        out.println( Launcher.SHUTDOWN );
+        out.println( JettyRunner.SHUTDOWN );
         out.flush();
         out.close();
         process.destroy();

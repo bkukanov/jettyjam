@@ -89,7 +89,7 @@
           </descriptorRefs>
           <archive>
             <manifest>
-              <mainClass>org.safehaus.jettyjam.https.SecureAppLauncher</mainClass>
+              <mainClass>org.safehaus.jettyjam.https.SecureAppJettyRunner</mainClass>
               <packageName>org.safehaus.embedded.jetty.https</packageName>
             </manifest>
             <manifestEntries>

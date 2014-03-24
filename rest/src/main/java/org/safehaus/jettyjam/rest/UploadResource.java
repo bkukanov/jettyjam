@@ -16,6 +16,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.inject.Singleton;
+import com.sun.jersey.multipart.FormDataParam;
+
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMultipart;
 
@@ -33,21 +35,15 @@ public class UploadResource {
     public static final String CONTENT = "content";
 
     @POST
-    @Consumes(MediaType.MULTIPART_FORM_DATA)
-    public Response upload(MimeMultipart multipart) {
-        try {
-            String filename = multipart.getBodyPart(0).getContent().toString();
-            LOG.warn("FILENAME: " + filename);
-            InputStream in = multipart.getBodyPart(1).getInputStream();
-            String fileLocation = /* config.getWarUploadPath() + */ filename;
-            writeToFile(in, fileLocation);
-        } catch (MessagingException ex) {
-            LOG.error("upload", ex);
-        } catch (IOException ex) {
-            LOG.error("upload", ex);
-        }
+    @Consumes( MediaType.MULTIPART_FORM_DATA )
+    public Response upload(
+            @FormDataParam( FILENAME_PARAM ) String filename,
+            @FormDataParam( CONTENT ) InputStream in )
+    {
+        writeToFile( in, filename );
         return Response.status(Response.Status.CREATED).entity("ok").build();
     }
+
 
     private void writeToFile(InputStream in, String fileLocation) {
         OutputStream out = null;

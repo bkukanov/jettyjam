@@ -81,7 +81,7 @@
           </descriptorRefs>
           <archive>
             <manifest>
-              <mainClass>org.safehaus.jettyjam.simple.SimpleAppLauncher</mainClass>
+              <mainClass>org.safehaus.jettyjam.simple.SimpleAppJettyRunner</mainClass>
               <packageName>org.safehaus.embedded.jetty.simple</packageName>
             </manifest>
             <manifestEntries>

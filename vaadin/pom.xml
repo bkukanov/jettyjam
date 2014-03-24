@@ -81,7 +81,7 @@
           </descriptorRefs>
           <archive>
             <manifest>
-              <mainClass>org.safehaus.jettyjam.vaadin.VaadinAppLauncher</mainClass>
+              <mainClass>org.safehaus.jettyjam.vaadin.VaadinAppJettyRunner</mainClass>
               <packageName>org.safehaus.embedded.jetty.vaadin</packageName>
             </manifest>
             <manifestEntries>

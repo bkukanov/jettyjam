@@ -5,6 +5,7 @@ import org.safehaus.embedded.jetty.utils.HttpConnector;
 import org.safehaus.embedded.jetty.utils.HttpsConnector;
 import org.safehaus.embedded.jetty.utils.JettyConnectors;
 import org.safehaus.embedded.jetty.utils.JettyContext;
+import org.safehaus.embedded.jetty.utils.JettyRunner;
 import org.safehaus.embedded.jetty.utils.ServletMapping;
 
 
@@ -20,21 +21,21 @@ import org.safehaus.embedded.jetty.utils.ServletMapping;
     httpConnectors = { @HttpConnector( id = "http" ) },
     httpsConnectors = { @HttpsConnector( id = "https" ) }
 )
-public class SecureAppLauncher extends org.safehaus.embedded.jetty.utils.Launcher {
+public class SecureAppJettyRunner extends JettyRunner {
 
-    public SecureAppLauncher() {
-        super( "TestApp", SecureAppLauncher.class.getClassLoader() );
+    public SecureAppJettyRunner() {
+        super( "TestApp", SecureAppJettyRunner.class.getClassLoader() );
     }
 
 
     @Override
-    public String getPackageBase() {
-        return getClass().getPackage().getName();
+    public String getSubClass() {
+        return getClass().getName();
     }
 
 
     public static void main( String [] args ) throws Exception {
-        SecureAppLauncher launcher = new SecureAppLauncher();
+        SecureAppJettyRunner launcher = new SecureAppJettyRunner();
         launcher.start();
     }
 }

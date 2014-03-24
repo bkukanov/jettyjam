@@ -12,27 +12,27 @@ import static junit.framework.TestCase.assertEquals;
 
 
 /**
- * Tests the Launcher functionality.
+ * Tests the JettyRunner functionality.
  */
 @JettyContext(
     servletMappings = { @ServletMapping( servlet = TestServlet.class, spec = "/*" ) }
 )
-public class LauncherTest extends Launcher {
+public class JettyRunnerTest extends JettyRunner {
     private static boolean runAsTest;
 
-    public LauncherTest() {
-        super( "SimpleTestApp", LauncherTest.class.getClassLoader() );
+    public JettyRunnerTest() {
+        super( "SimpleTestApp", JettyRunnerTest.class.getClassLoader() );
     }
 
 
     @Override
-    public String getPackageBase() {
-        return getClass().getPackage().getName();
+    public String getSubClass() {
+        return getClass().getName();
     }
 
 
-    public static void main( String [] args ) throws Exception {
-        LauncherTest launcher = new LauncherTest();
+    public static void main( String [] args ) throws Throwable {
+        JettyRunnerTest launcher = new JettyRunnerTest();
         launcher.start();
 
         if ( runAsTest ) {
@@ -52,7 +52,7 @@ public class LauncherTest extends Launcher {
 
 
     @Test
-    public void testLauncher() throws Exception {
+    public void testLauncher() throws Throwable {
         runAsTest = true;
         main( null );
     }
