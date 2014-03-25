@@ -60,12 +60,11 @@ public class ConnectorBuilder {
             return connector;
         }
 
-        return setConnectors( new ArrayList<ServerConnector>(), testClass.getClassLoader(),
-                connectorsAnnotation, server );
+        return setConnectors( new ArrayList<ServerConnector>(), connectorsAnnotation, server );
     }
 
 
-    public static ServerConnector setConnectors( String subClass, ClassLoader cl, Server server ) {
+    public static ServerConnector setConnectors( String subClass, Server server ) {
         Class<? extends JettyRunner> launcherClass = null;
 
         try {
@@ -87,12 +86,12 @@ public class ConnectorBuilder {
         }
 
         JettyConnectors connectorsAnnotation = launcherClass.getAnnotation( JettyConnectors.class );
-        return setConnectors( new ArrayList<ServerConnector>(), cl, connectorsAnnotation, server );
+        return setConnectors( new ArrayList<ServerConnector>(), connectorsAnnotation, server );
     }
 
 
-    static ServerConnector setConnectors( List<ServerConnector> connectors, ClassLoader cl,
-                                                 JettyConnectors connectorsAnnotation, Server server ) {
+    static ServerConnector setConnectors( List<ServerConnector> connectors,
+                                          JettyConnectors connectorsAnnotation, Server server ) {
         ServerConnector defaultConnector = null;
 
         for ( HttpConnector connectorAnnotation : connectorsAnnotation.httpConnectors() ) {
@@ -111,6 +110,7 @@ public class ConnectorBuilder {
 
             SslContextFactory sslContextFactory = new SslContextFactory();
 
+            ClassLoader cl = Thread.currentThread().getContextClassLoader();
             URL ksPathUrl = cl.getResource( connectorAnnotation.keyStore() );
             String ksPath = ksPathUrl.toExternalForm();
 

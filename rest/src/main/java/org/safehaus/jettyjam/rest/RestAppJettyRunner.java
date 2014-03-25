@@ -19,7 +19,7 @@ import com.google.inject.servlet.GuiceFilter;
 public class RestAppJettyRunner extends JettyRunner {
 
     public RestAppJettyRunner() {
-        super( "TestApp", RestAppJettyRunner.class.getClassLoader() );
+        super( "TestApp" );
     }
 
 

@@ -174,19 +174,17 @@
       <artifactId>jackson-jaxrs-json-provider</artifactId>
     </dependency>
 
+    <dependency>
+      <groupId>javax.mail</groupId>
+      <artifactId>mail</artifactId>
+    </dependency>
+
     <!-- Test Dependencies -->
 
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>javax.mail</groupId>
-      <artifactId>mail</artifactId>
-      <version>1.4.5</version>
-      <type>jar</type>
     </dependency>
   </dependencies>
 </project>

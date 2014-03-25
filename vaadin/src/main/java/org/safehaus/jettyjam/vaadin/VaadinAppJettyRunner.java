@@ -24,7 +24,7 @@ import com.google.inject.servlet.GuiceFilter;
 public class VaadinAppJettyRunner extends JettyRunner {
 
     public VaadinAppJettyRunner() {
-        super( "TestApp", VaadinAppJettyRunner.class.getClassLoader() );
+        super( "TestApp" );
     }
 
 

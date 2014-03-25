@@ -1,6 +1,8 @@
 package org.safehaus.jettyjam.vaadin;
 
 
+import java.io.InputStream;
+
 import javax.ws.rs.core.MediaType;
 
 import org.junit.ClassRule;
@@ -13,7 +15,10 @@ import org.safehaus.embedded.jetty.utils.ServletMapping;
 
 import com.google.inject.servlet.GuiceFilter;
 import com.sun.jersey.api.client.Client;
+import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.api.client.config.DefaultClientConfig;
+import com.sun.jersey.multipart.FormDataBodyPart;
+import com.sun.jersey.multipart.FormDataMultiPart;
 
 import static junit.framework.TestCase.assertEquals;
 
@@ -50,5 +55,22 @@ public class VaadinAppTest {
                 .get( String.class );
 
         assertEquals( FooResource.JSON_MESSAGE, result );
+    }
+
+
+    @Test
+    public void testUploadResource() throws Exception {
+        InputStream in = getClass().getClassLoader().getResourceAsStream( "log4j.properties" );
+
+        FormDataMultiPart part = new FormDataMultiPart();
+        part.field( UploadResource.FILENAME_PARAM, "log4j.properties" );
+
+        FormDataBodyPart body = new FormDataBodyPart( UploadResource.CONTENT,
+                in, MediaType.APPLICATION_OCTET_STREAM_TYPE );
+        part.bodyPart( body );
+
+        String serverUrl = service.getServerUrl().toExternalForm();
+        WebResource resource = Client.create().resource( serverUrl + UploadResource.ENDPOINT_URL );
+        String result = resource.type( MediaType.MULTIPART_FORM_DATA_TYPE ).post( String.class, part );
     }
 }

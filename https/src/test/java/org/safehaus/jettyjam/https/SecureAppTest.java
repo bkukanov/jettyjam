@@ -26,7 +26,7 @@ public class SecureAppTest {
 
     @JettyContext(
         servletMappings = {
-                @ServletMapping( servlet = HelloWorldServlet.class, spec = "/*" )
+                @ServletMapping( servlet = "org.safehaus.jettyjam.https.HelloWorldServlet", spec = "/*" )
         }
     )
     @JettyConnectors(

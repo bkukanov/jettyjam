@@ -37,7 +37,6 @@ public abstract class JettyRunner {
     private boolean started;
     private Timer timer = new Timer();
     private File pidFile;
-    private final ClassLoader classLoader;
     private final UUID appId;
     private final String appName;
     private String hostname;
@@ -48,8 +47,7 @@ public abstract class JettyRunner {
     }
 
 
-    protected JettyRunner( String appName, ClassLoader cl ) {
-        classLoader = cl;
+    protected JettyRunner( String appName ) {
         server = new Server();
         appId = UUID.randomUUID();
         this.appName = appName;
@@ -58,7 +56,8 @@ public abstract class JettyRunner {
 
 
     protected void start() throws Exception {
-        ServerConnector defaultConnector = ConnectorBuilder.setConnectors( getSubClass(), classLoader, server );
+        ServerConnector defaultConnector = ConnectorBuilder.setConnectors( getSubClass(), server );
+
         if ( defaultConnector.getHost() == null ) {
             hostname = "localhost";
         }

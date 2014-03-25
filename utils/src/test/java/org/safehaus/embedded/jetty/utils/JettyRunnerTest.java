@@ -21,7 +21,7 @@ public class JettyRunnerTest extends JettyRunner {
     private static boolean runAsTest;
 
     public JettyRunnerTest() {
-        super( "SimpleTestApp", JettyRunnerTest.class.getClassLoader() );
+        super( "SimpleTestApp" );
     }
 
 

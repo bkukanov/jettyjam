@@ -10,13 +10,13 @@ import org.safehaus.embedded.jetty.utils.ServletMapping;
  * A simple JettyLauncher.
  */
 @JettyContext(
-    servletMappings = { @ServletMapping( servlet = HelloWorldServlet.class, spec = "/*" ) },
+    servletMappings = { @ServletMapping( servlet = "org.safehaus.jettyjam.simple.HelloWorldServlet", spec = "/*" ) },
     filterMappings = {}
 )
 public class SimpleAppJettyRunner extends JettyRunner {
 
     public SimpleAppJettyRunner() {
-        super( "TestApp", SimpleAppJettyRunner.class.getClassLoader() );
+        super( "TestApp" );
     }
 
 
