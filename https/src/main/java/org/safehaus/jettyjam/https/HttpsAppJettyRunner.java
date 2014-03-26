@@ -13,7 +13,7 @@ import org.safehaus.embedded.jetty.utils.ServletMapping;
  * A simple JettyLauncher.
  */
 @JettyContext(
-    servletMappings = { @ServletMapping( servlet = "org.safehaus.jettyjam.https.HelloWorldServlet", spec = "/*" ) },
+    servletMappings = { @ServletMapping( servlet = HelloWorldServlet.class, spec = "/*" ) },
     filterMappings = {}
 )
 @JettyConnectors(
@@ -21,9 +21,9 @@ import org.safehaus.embedded.jetty.utils.ServletMapping;
     httpConnectors = { @HttpConnector( id = "http" ) },
     httpsConnectors = { @HttpsConnector( id = "https" ) }
 )
-public class SecureAppJettyRunner extends JettyRunner {
+public class HttpsAppJettyRunner extends JettyRunner {
 
-    public SecureAppJettyRunner() {
+    public HttpsAppJettyRunner() {
         super( "TestApp" );
     }
 
@@ -35,7 +35,7 @@ public class SecureAppJettyRunner extends JettyRunner {
 
 
     public static void main( String [] args ) throws Exception {
-        SecureAppJettyRunner launcher = new SecureAppJettyRunner();
+        HttpsAppJettyRunner launcher = new HttpsAppJettyRunner();
         launcher.start();
     }
 }

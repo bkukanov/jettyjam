@@ -3,7 +3,7 @@
   <parent>
     <artifactId>jettyjam-parent</artifactId>
     <groupId>org.safehaus.jettyjam</groupId>
-    <version>1.0.1-SNAPSHOT</version>
+    <version>1.0.2-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
@@ -99,26 +99,12 @@
                 <includes>
                   <include>org.safehaus.jettyjam:simple</include>
                   <include>org.safehaus.jettyjam:utils</include>
-                  <!--<include>org.eclipse.jetty:jetty-server</include>-->
-                  <!--<include>org.eclipse.jetty:jetty-servlet</include>-->
-                  <!--<include>org.eclipse.jetty:jetty-http</include>-->
-                  <!--<include>org.eclipse.jetty:jetty-security</include>-->
-                  <!--<include>org.eclipse.jetty:jetty-webapp</include>-->
-                  <!--<include>org.eclipse.jetty:jetty-client</include>-->
-                  <!--<include>org.eclipse.jetty:jetty-util</include>-->
-                  <!--<include>org.slf4j:slf4j-api</include>-->
-                  <!--<include>com.sun.jersey:jersey-client</include>-->
-                  <!--<include>javax.servlet:javax.servlet-api</include>-->
                 </includes>
               </artifactSet>
               <transformers>
                 <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
                 <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                  <mainClass>org.safehaus.embedded.jetty.utils.JarRunner</mainClass>
-                  <manifestEntries>
-                    <Bundle-MainClass>org.safehaus.jettyjam.simple.SimpleAppJettyRunner</Bundle-MainClass>
-                    <packageName>org.safehaus.jettyjam.simple</packageName>
-                  </manifestEntries>
+                  <mainClass>org.safehaus.jettyjam.simple.SimpleAppJarLauncher</mainClass>
                 </transformer>
               </transformers>
             </configuration>

@@ -65,10 +65,8 @@ scm:git:http://${safehaus.git.username}@stash.safehaus.org/scm/JETTYJAM/main.git
     <module>utils</module>
     <module>rest</module>
     <module>vaadin</module>
-    <!--
     <module>simple</module>
     <module>https</module>
-    -->
   </modules>
 
   <build>
