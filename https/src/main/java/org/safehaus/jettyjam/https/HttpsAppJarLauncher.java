@@ -5,7 +5,7 @@ import org.safehaus.embedded.jetty.utils.JarJarClassLoader;
 
 
 /**
- * Launches the main() of the SimpleAppJettyRunner.
+ * Launches the main() of the HttpsAppJettyRunner.
  */
 public class HttpsAppJarLauncher {
 
