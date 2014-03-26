@@ -10,6 +10,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 
 import org.junit.rules.TestRule;
@@ -37,6 +39,8 @@ public class JettyJarResource implements TestRule {
     private BufferedReader in;
     private String pidFilePath;
     private Properties appProperties;
+    private Properties systemProperties = new Properties();
+    private String[] args = new String[0];
     private String hostname;
     private URL serverUrl;
     private int port;
@@ -58,9 +62,30 @@ public class JettyJarResource implements TestRule {
     }
 
 
-    public JettyJarResource( int debugPort ) {
+    public JettyJarResource( String[] args, Properties properties ) {
+        this();
+        this.args = args;
+        this.systemProperties = properties;
+    }
+
+
+    public JettyJarResource( String[] args ) {
+        this();
+        this.args = args;
+    }
+
+
+    public JettyJarResource( Properties systemProperties ) {
+        this();
+        this.systemProperties = systemProperties;
+    }
+
+
+    public JettyJarResource( int debugPort, String[] args, Properties systemProperties ) {
         this();
         this.debugPort = debugPort;
+        this.args = args;
+        this.systemProperties = systemProperties;
     }
 
 
@@ -98,15 +123,34 @@ public class JettyJarResource implements TestRule {
             throw new FileNotFoundException( "Cannot find jar file: " + jarFile.getCanonicalPath() );
         }
 
-        String[] execArgs;
+        List<String> cmd = new ArrayList<String>( 4 + args.length + systemProperties.size() );
+        cmd.add( "java" );
+        cmd.add( "-jar" );
+
         if ( debugPort > 0 ) {
-            execArgs = new String[] { "java", "-jar", jarFile.getCanonicalPath() };
-        }
-        else {
-            execArgs = new String[] { "java", REMOTE_DEBUG + debugPort, "-jar", jarFile.getCanonicalPath() };
+            cmd.add( REMOTE_DEBUG + debugPort );
         }
 
+        for ( Object key : systemProperties.keySet() ) {
+            String propName = ( String ) key;
 
+            if ( systemProperties.getProperty( propName ) == null ) {
+                cmd.add( "-D" + propName );
+            }
+            else {
+                cmd.add( "-D" + propName  + "=" + systemProperties.getProperty( propName ) );
+            }
+        }
+
+        cmd.add( jarFile.getCanonicalPath() );
+
+        // don't know if add is append so not using Collection copy
+        //noinspection ManualArrayToCollectionCopy
+        for ( String arg : args ) {
+            cmd.add( arg );
+        }
+
+        String[] execArgs = cmd.toArray( new String [ cmd.size() ] );
         process = Runtime.getRuntime().exec( execArgs );
 
         // the path to the pidFilePath will be output from the stderr stream

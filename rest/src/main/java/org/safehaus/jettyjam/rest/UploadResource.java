@@ -28,7 +28,7 @@ import com.sun.jersey.multipart.FormDataParam;
 @Path( UploadResource.ENDPOINT_URL )
 public class UploadResource {
     public final static String BUILD_DIR_KEY = "project.build.directory";
-    public final static String ENDPOINT_URL = "/upload";
+    public final static String ENDPOINT_URL = "/rest/upload";
     private final static Logger LOG = LoggerFactory.getLogger( UploadResource.class );
     public static final String FILENAME_PARAM = "file";
     public static final String CONTENT = "content";
@@ -39,14 +39,14 @@ public class UploadResource {
     public Response upload( @FormDataParam( FILENAME_PARAM ) String filename,
                             @FormDataParam( CONTENT ) InputStream in )
     {
-        File file = new File( getBuildDir(), filename );
+        File file = new File( getDownloadDir(), filename );
         writeToFile( in, file.getAbsolutePath() );
-        return Response.status( Response.Status.CREATED ).entity( filename ).build();
+        return Response.status( Response.Status.CREATED ).entity( file.getAbsoluteFile() ).build();
     }
 
 
-    private String getBuildDir() {
-        InputStream in = getClass().getResourceAsStream( "UploadResource.properties" );
+    public static String getDownloadDir() {
+        InputStream in = UploadResource.class.getResourceAsStream( "/UploadResource.properties" );
         if ( in != null ) {
             Properties properties = new Properties();
             try {
@@ -65,6 +65,8 @@ public class UploadResource {
 
 
     private void writeToFile( InputStream in, String fileLocation ) {
+        LOG.info( "writing uploaded file to fileLocation {}", fileLocation );
+
         OutputStream out = null;
 
         try {

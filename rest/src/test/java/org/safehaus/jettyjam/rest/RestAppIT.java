@@ -1,7 +1,9 @@
 package org.safehaus.jettyjam.rest;
 
 
+import java.io.File;
 import java.io.InputStream;
+import java.util.Random;
 
 import javax.ws.rs.core.MediaType;
 
@@ -19,6 +21,7 @@ import com.sun.jersey.multipart.FormDataBodyPart;
 import com.sun.jersey.multipart.FormDataMultiPart;
 
 import static junit.framework.TestCase.assertEquals;
+import static junit.framework.TestCase.assertTrue;
 
 
 /**
@@ -29,10 +32,10 @@ public class RestAppIT {
 
 
     @ClassRule
-    public static JettyJarResource app = new JettyJarResource( 5005 );
+    public static JettyJarResource app = new JettyJarResource();
 
 
-//    @Test
+    @Test
     public void testEmbeddedApp() throws Exception {
         LOG.info( "integration testing embedded jetty application executable jar file" );
 
@@ -40,7 +43,7 @@ public class RestAppIT {
         Client client = Client.create( clientConfig );
         String result = client
                 .resource( app.getAppProperties().getProperty( JettyRunner.SERVER_URL ) )
-                .path( "/" )
+                .path( "/hello/" )
                 .accept( MediaType.TEXT_PLAIN )
                 .get( String.class );
 
@@ -48,14 +51,14 @@ public class RestAppIT {
     }
 
 
-//    @Test
+    @Test
     public void testFooResource() {
         DefaultClientConfig clientConfig = new DefaultClientConfig();
         Client client = Client.create( clientConfig );
         String result = client
                 .resource( app.getAppProperties().getProperty( JettyRunner.SERVER_URL ) )
                 .path( FooResource.ENDPOINT_URL )
-                .accept( MediaType.TEXT_PLAIN )
+                .accept( MediaType.APPLICATION_JSON )
                 .get( String.class );
 
         assertEquals( FooResource.JSON_MESSAGE, result );
@@ -64,10 +67,15 @@ public class RestAppIT {
 
     @Test
     public void testUploadResource() throws Exception {
+        File downloads = new File( UploadResource.getDownloadDir() );
+        File testFile = new File( downloads, "log4j.properties" + new Random().nextDouble() );
+
+        LOG.warn( "testFile = {}", testFile.getAbsolutePath() );
+
         InputStream in = getClass().getClassLoader().getResourceAsStream( "log4j.properties" );
 
         FormDataMultiPart part = new FormDataMultiPart();
-        part.field( UploadResource.FILENAME_PARAM, "log4j.properties" );
+        part.field( UploadResource.FILENAME_PARAM, testFile.getName() );
 
         FormDataBodyPart body = new FormDataBodyPart( UploadResource.CONTENT,
                 in, MediaType.APPLICATION_OCTET_STREAM_TYPE );
@@ -75,9 +83,12 @@ public class RestAppIT {
 
         LOG.debug( "Server URL = {}", app.getServerUrl() );
 
-        WebResource resource = Client.create().resource( app.getServerUrl() + UploadResource.ENDPOINT_URL );
+        WebResource resource = Client.create()
+                                     .resource( app.getAppProperties().getProperty( JettyRunner.SERVER_URL ) )
+                                     .path( UploadResource.ENDPOINT_URL );
         String result = resource.type( MediaType.MULTIPART_FORM_DATA_TYPE ).post( String.class, part );
 
-        LOG.debug( "Got back result = {}", result );
+        LOG.warn( "Got back result = {}", result );
+        testFile = new File( result );
     }
 }
