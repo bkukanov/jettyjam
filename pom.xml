@@ -9,7 +9,7 @@
 
   <artifactId>jettyjam-parent</artifactId>
   <groupId>org.safehaus.jettyjam</groupId>
-  <version>1.0.2</version>
+  <version>1.0.3-SNAPSHOT</version>
   <modelVersion>4.0.0</modelVersion>
   <name>JettyJam Parent</name>
 
@@ -39,7 +39,7 @@
     <developerConnection>
 scm:git:http://${safehaus.git.username}@stash.safehaus.org/scm/JETTYJAM/main.git
     </developerConnection>
-    <tag>jettyjam-parent-1.0.2</tag>
+    <tag>HEAD</tag>
   </scm>
 
   <properties>
