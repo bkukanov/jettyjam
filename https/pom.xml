@@ -3,7 +3,7 @@
   <parent>
     <artifactId>jettyjam-parent</artifactId>
     <groupId>org.safehaus.jettyjam</groupId>
-    <version>1.0.2-SNAPSHOT</version>
+    <version>1.0.2</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
@@ -107,7 +107,7 @@
                 </includes>
               </artifactSet>
               <transformers>
-                <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
+                <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer" />
                 <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
                   <mainClass>org.safehaus.jettyjam.https.HttpsAppJarLauncher</mainClass>
                 </transformer>
