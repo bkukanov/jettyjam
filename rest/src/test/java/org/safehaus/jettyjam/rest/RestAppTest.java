@@ -6,13 +6,11 @@ import java.io.InputStream;
 import javax.ws.rs.core.MediaType;
 
 import org.junit.ClassRule;
-import org.junit.Rule;
 import org.junit.Test;
-import org.safehaus.embedded.jetty.utils.ContextListener;
-import org.safehaus.embedded.jetty.utils.FilterMapping;
-import org.safehaus.embedded.jetty.utils.JettyContext;
-import org.safehaus.embedded.jetty.utils.JettyResource;
-import org.safehaus.embedded.jetty.utils.JettyRunner;
+import org.safehaus.jettyjam.utils.ContextListener;
+import org.safehaus.jettyjam.utils.FilterMapping;
+import org.safehaus.jettyjam.utils.JettyContext;
+import org.safehaus.jettyjam.utils.JettyResource;
 
 import com.google.inject.servlet.GuiceFilter;
 import com.sun.jersey.api.client.Client;

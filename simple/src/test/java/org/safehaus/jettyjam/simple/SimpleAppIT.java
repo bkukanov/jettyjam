@@ -5,9 +5,8 @@ import javax.ws.rs.core.MediaType;
 
 import org.junit.Rule;
 import org.junit.Test;
-import org.safehaus.embedded.jetty.utils.JettyJarResource;
-import org.safehaus.embedded.jetty.utils.JettyRunner;
-import org.safehaus.embedded.jetty.utils.JettyRunner;
+import org.safehaus.jettyjam.utils.JettyJarResource;
+import org.safehaus.jettyjam.utils.JettyRunner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

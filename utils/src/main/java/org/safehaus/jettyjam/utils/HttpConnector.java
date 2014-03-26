@@ -1,4 +1,4 @@
-package org.safehaus.embedded.jetty.utils;
+package org.safehaus.jettyjam.utils;
 
 
 import java.lang.annotation.ElementType;
@@ -9,13 +9,12 @@ import java.lang.annotation.Target;
 
 
 /**
- * A Connector annotations for configuring Jetty connectors.
+ * An HttpConnector configuration annotation for Jetty.
  */
 @Retention( RetentionPolicy.RUNTIME )
 @Target( { ElementType.FIELD, ElementType.TYPE } )
 @Inherited
-public @interface JettyConnectors {
-    HttpConnector[] httpConnectors() default {};
-    HttpsConnector[] httpsConnectors() default {};
-    String defaultId();
+public @interface HttpConnector {
+    String id();
+    int port() default 0;
 }

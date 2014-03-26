@@ -1,4 +1,4 @@
-package org.safehaus.embedded.jetty.utils;
+package org.safehaus.jettyjam.utils;
 
 
 import java.lang.annotation.ElementType;
@@ -7,16 +7,16 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import javax.servlet.ServletContextListener;
+import javax.servlet.Servlet;
 
 
 /**
- * A configuration annotation to add a context Listener to Jetty.
+ * A servlet mapping.
  */
 @Retention( RetentionPolicy.RUNTIME )
 @Target( { ElementType.FIELD, ElementType.TYPE } )
 @Inherited
-public @interface ContextListener {
-    Class<? extends ServletContextListener> listener();
-    String contextPath() default "/";
+public @interface ServletMapping {
+    Class<? extends Servlet> servlet();
+    String spec();
 }

@@ -1,7 +1,7 @@
 package org.safehaus.jettyjam.vaadin;
 
 
-import org.safehaus.embedded.jetty.utils.JarJarClassLoader;
+import org.safehaus.jettyjam.utils.JarJarClassLoader;
 
 
 /**

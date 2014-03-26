@@ -1,7 +1,7 @@
 package org.safehaus.jettyjam.https;
 
 
-import org.safehaus.embedded.jetty.utils.JarJarClassLoader;
+import org.safehaus.jettyjam.utils.JarJarClassLoader;
 
 
 /**

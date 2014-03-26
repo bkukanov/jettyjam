@@ -1,4 +1,4 @@
-package org.safehaus.embedded.jetty.utils;
+package org.safehaus.jettyjam.utils;
 
 
 import java.io.IOException;

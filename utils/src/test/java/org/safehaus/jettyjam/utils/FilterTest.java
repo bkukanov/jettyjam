@@ -1,4 +1,4 @@
-package org.safehaus.embedded.jetty.utils;
+package org.safehaus.jettyjam.utils;
 
 
 import javax.ws.rs.core.MediaType;
@@ -15,11 +15,15 @@ import static junit.framework.TestCase.assertEquals;
 /**
  * Tests the Hello World Servlet in embedded mode.
  */
-public class ServletTest {
+public class FilterTest {
+    public static final String ENDPOINT = "/test";
 
     @JettyContext(
         servletMappings = {
-                @ServletMapping( servlet = TestServlet.class, spec = "/*" )
+            @ServletMapping( servlet = TestServlet.class, spec = ENDPOINT )
+        },
+        filterMappings = {
+            @FilterMapping( filter = TestFilter.class, spec = "/*" )
         }
     )
     @Rule
@@ -27,15 +31,15 @@ public class ServletTest {
 
 
     @Test
-    public void testHelloWorld() {
+    public void testFilter() {
         DefaultClientConfig clientConfig = new DefaultClientConfig();
         Client client = Client.create( clientConfig );
         String result = client
                 .resource( service.getServerUrl().toString() )
-                .path( "/" )
+                .path( ENDPOINT )
                 .accept( MediaType.TEXT_PLAIN )
                 .get( String.class );
 
-        assertEquals( TestServlet.MESSAGE, result );
+        assertEquals( TestServlet.MESSAGE + TestFilter.MESSAGE, result );
     }
 }

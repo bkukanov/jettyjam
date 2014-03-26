@@ -1,12 +1,12 @@
 package org.safehaus.jettyjam.https;
 
 
-import org.safehaus.embedded.jetty.utils.HttpConnector;
-import org.safehaus.embedded.jetty.utils.HttpsConnector;
-import org.safehaus.embedded.jetty.utils.JettyConnectors;
-import org.safehaus.embedded.jetty.utils.JettyContext;
-import org.safehaus.embedded.jetty.utils.JettyRunner;
-import org.safehaus.embedded.jetty.utils.ServletMapping;
+import org.safehaus.jettyjam.utils.HttpConnector;
+import org.safehaus.jettyjam.utils.HttpsConnector;
+import org.safehaus.jettyjam.utils.JettyConnectors;
+import org.safehaus.jettyjam.utils.JettyContext;
+import org.safehaus.jettyjam.utils.JettyRunner;
+import org.safehaus.jettyjam.utils.ServletMapping;
 
 
 /**

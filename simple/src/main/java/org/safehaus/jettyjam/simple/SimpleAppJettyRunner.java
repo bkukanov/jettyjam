@@ -1,9 +1,9 @@
 package org.safehaus.jettyjam.simple;
 
 
-import org.safehaus.embedded.jetty.utils.JettyContext;
-import org.safehaus.embedded.jetty.utils.JettyRunner;
-import org.safehaus.embedded.jetty.utils.ServletMapping;
+import org.safehaus.jettyjam.utils.JettyContext;
+import org.safehaus.jettyjam.utils.JettyRunner;
+import org.safehaus.jettyjam.utils.ServletMapping;
 
 
 /**

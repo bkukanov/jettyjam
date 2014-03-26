@@ -8,7 +8,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <name>JettyJam Utils</name>
-  <artifactId>utils</artifactId>
+  <artifactId>jettyjam-utils</artifactId>
   <packaging>jar</packaging>
   <description>
     A set of utilities used to setup embedded launchers and test with Jetty.
