@@ -20,8 +20,8 @@ import static junit.framework.TestCase.assertEquals;
 /**
  * A basic integration test for the embedded jetty application.
  */
-public class SecureAppIT {
-    private final static Logger LOG = LoggerFactory.getLogger( SecureAppIT.class );
+public class HttpsAppIT {
+    private final static Logger LOG = LoggerFactory.getLogger( HttpsAppIT.class );
 
 
     @Rule

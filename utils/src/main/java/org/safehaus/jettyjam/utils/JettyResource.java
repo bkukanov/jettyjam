@@ -19,6 +19,7 @@ public class JettyResource implements TestRule {
     private ServerConnector defaultConnector;
     private URL serverUrl;
     private int port;
+    private boolean secure;
     private boolean started;
     private String hostname;
 
@@ -63,8 +64,11 @@ public class JettyResource implements TestRule {
         }
 
         String protocol = "http";
+        secure = false;
         if ( defaultConnector.getDefaultProtocol().contains( "SSL" ) ) {
             protocol = "https";
+            secure = true;
+            CertUtils.preparations( hostname, port );
         }
 
         this.serverUrl = new URL( protocol, "localhost", port, "" );
@@ -109,5 +113,10 @@ public class JettyResource implements TestRule {
 
     public String getHostname() {
         return hostname;
+    }
+
+
+    public boolean isSecure() {
+        return secure;
     }
 }

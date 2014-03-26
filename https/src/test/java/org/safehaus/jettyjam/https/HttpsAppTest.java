@@ -22,7 +22,7 @@ import static junit.framework.TestCase.assertEquals;
 /**
  * Tests the Hello World Servlet in embedded mode.
  */
-public class SecureAppTest {
+public class HttpsAppTest {
 
     @JettyContext(
         servletMappings = {

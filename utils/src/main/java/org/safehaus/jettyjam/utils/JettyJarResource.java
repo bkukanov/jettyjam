@@ -43,6 +43,7 @@ public class JettyJarResource implements TestRule {
     private String[] args = new String[0];
     private String hostname;
     private URL serverUrl;
+    private boolean secure = false;
     private int port;
     private int debugPort = -1;
 
@@ -198,6 +199,11 @@ public class JettyJarResource implements TestRule {
         port = Integer.parseInt( appProperties.getProperty( JettyRunner.SERVER_PORT ) );
         hostname = "localhost";
         serverUrl = new URL( appProperties.getProperty( JettyRunner.SERVER_URL ) );
+        secure = Boolean.parseBoolean( appProperties.getProperty( JettyRunner.IS_SECURE ) );
+
+        if ( secure ) {
+            CertUtils.preparations( hostname, port );
+        }
     }
 
 
@@ -266,5 +272,10 @@ public class JettyJarResource implements TestRule {
 
     public URL getServerUrl() {
         return serverUrl;
+    }
+
+
+    public boolean isSecure() {
+        return secure;
     }
 }
