@@ -6,7 +6,7 @@ import javax.ws.rs.core.MediaType;
 import org.junit.Rule;
 import org.junit.Test;
 import org.safehaus.jettyjam.utils.JettyContext;
-import org.safehaus.jettyjam.utils.JettyResource;
+import org.safehaus.jettyjam.utils.JettyUnitResource;
 import org.safehaus.jettyjam.utils.ServletMapping;
 
 import com.sun.jersey.api.client.Client;
@@ -26,7 +26,7 @@ public class SimpleAppTest {
         }
     )
     @Rule
-    public JettyResource service = new JettyResource();
+    public JettyUnitResource service = new JettyUnitResource();
 
 
     @Test

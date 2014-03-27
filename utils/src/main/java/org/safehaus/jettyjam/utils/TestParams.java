@@ -27,30 +27,12 @@ public class TestParams {
         setHostname( jettyResource.getHostname() )
                 .setPort( jettyResource.getPort() )
                 .setSecure( jettyResource.isSecure() )
-                .setMode( TestMode.UNIT )
+                .setMode( jettyResource.getMode() )
                 .setServerUrl( jettyResource.getServerUrl().toString() ).setLogger( LOG );
 
         if ( isSecure() ) {
             try {
                 CertUtils.preparations( getHostname(), getPort() );
-            }
-            catch ( Exception e ) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-
-    TestParams( JettyJarResource jarResource ) {
-        setHostname( jarResource.getHostname() )
-                .setPort( jarResource.getPort() )
-                .setSecure( jarResource.isSecure() )
-                .setMode( TestMode.INTEG )
-                .setServerUrl( jarResource.getServerUrl().toString() ).setLogger( LOG );
-
-        if ( isSecure() ) {
-            try {
-                CertUtils.preparations( hostname, port );
             }
             catch ( Exception e ) {
                 e.printStackTrace();
@@ -126,15 +108,15 @@ public class TestParams {
 
 
     /**
-     * Creates a new WebResource to operate against the JettyResource that created this
+     * Creates a new WebResource to operate against the JettyUnitResource that created this
      * TestParam. The new WebResource has the resource, and path already set with a
      * query parameter to signal that this is a test: {@link TestMode#TEST_MODE_PROPERTY}.
      *
      * @return a usable web resource
      * @throws IllegalStateException if the endpoint is not set on this TestParam
      * @see TestMode#TEST_MODE_PROPERTY
-     * @see JettyJarResource
-     * @see JettyResource
+     * @see JettyIntegResource
+     * @see JettyUnitResource
      */
     public WebResource newWebResource() {
         if ( getEndpoint() == null ) {

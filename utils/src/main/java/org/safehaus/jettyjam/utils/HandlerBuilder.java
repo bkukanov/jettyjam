@@ -51,23 +51,23 @@ public class HandlerBuilder {
 
     /**
      * Builds a collection of handlers by scanning a test class for an annotated
-     * JettyResource field.
+     * JettyUnitResource field.
      *
      * @param testClass the test class to scan
      * @return the collection of handlers
      */
     public ServletContextHandler build( Class testClass, Server server) {
-        // Check to make sure we have a JettyResource field
+        // Check to make sure we have a JettyUnitResource field
         Field jettyResource = getJettyResource( testClass );
         if ( jettyResource == null ) {
-            throw new IllegalStateException( "There's no JettyResource rule on class " + testClass );
+            throw new IllegalStateException( "There's no JettyUnitResource rule on class " + testClass );
         }
 
-        // Check to see that we have a JettyContext annotation on JettyResource field
+        // Check to see that we have a JettyContext annotation on JettyUnitResource field
         JettyContext contextAnnotation = jettyResource.getAnnotation( JettyContext.class );
         if ( contextAnnotation == null ) {
             throw new IllegalStateException( "There's no JettyContext annotation on " +
-                    "JettyResource field of testClass " + testClass );
+                    "JettyUnitResource field of testClass " + testClass );
         }
 
         // setup the servlet context
@@ -114,7 +114,7 @@ public class HandlerBuilder {
             LOG.debug( "Looking at {} field of {} test class", field.getName(), testClass.getName() );
 
             if ( JettyResource.class.isAssignableFrom( field.getType() ) ) {
-                LOG.debug( "Found JettyResource for {} field of {} test class", field.getName(), testClass.getName() );
+                LOG.debug( "Found JettyUnitResource for {} field of {} test class", field.getName(), testClass.getName() );
 
                 return field;
             }

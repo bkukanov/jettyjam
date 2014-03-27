@@ -6,9 +6,6 @@ import javax.ws.rs.core.MediaType;
 import org.junit.Rule;
 import org.junit.Test;
 
-import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.config.DefaultClientConfig;
-
 import static junit.framework.TestCase.assertEquals;
 
 
@@ -27,18 +24,16 @@ public class FilterTest {
         }
     )
     @Rule
-    public JettyResource service = new JettyResource();
+    public JettyResource service = new JettyUnitResource();
 
 
     @Test
     public void testFilter() {
-        DefaultClientConfig clientConfig = new DefaultClientConfig();
-        Client client = Client.create( clientConfig );
-        String result = client
-                .resource( service.getServerUrl().toString() )
-                .path( ENDPOINT )
-                .accept( MediaType.TEXT_PLAIN )
-                .get( String.class );
+        String result = service.newTestParams()
+               .setEndpoint( ENDPOINT )
+               .newWebResource()
+               .accept( MediaType.TEXT_PLAIN )
+               .get( String.class );
 
         assertEquals( TestServlet.MESSAGE + TestFilter.MESSAGE, result );
     }

@@ -10,7 +10,7 @@ import org.junit.Test;
 import org.safehaus.jettyjam.utils.ContextListener;
 import org.safehaus.jettyjam.utils.FilterMapping;
 import org.safehaus.jettyjam.utils.JettyContext;
-import org.safehaus.jettyjam.utils.JettyResource;
+import org.safehaus.jettyjam.utils.JettyUnitResource;
 import org.safehaus.jettyjam.utils.ServletMapping;
 
 import com.google.inject.servlet.GuiceFilter;
@@ -41,7 +41,7 @@ public class VaadinAppTest {
         }
     )
     @ClassRule
-    public static JettyResource service = new JettyResource();
+    public static JettyUnitResource service = new JettyUnitResource();
 
 
     @Test

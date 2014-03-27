@@ -9,7 +9,7 @@ import javax.ws.rs.core.MediaType;
 
 import org.junit.ClassRule;
 import org.junit.Test;
-import org.safehaus.jettyjam.utils.JettyJarResource;
+import org.safehaus.jettyjam.utils.JettyIntegResource;
 import org.safehaus.jettyjam.utils.JettyRunner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,7 +32,7 @@ public class RestAppIT {
 
 
     @ClassRule
-    public static JettyJarResource app = new JettyJarResource();
+    public static JettyIntegResource app = new JettyIntegResource();
 
 
     @Test

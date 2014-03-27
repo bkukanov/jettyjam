@@ -12,7 +12,7 @@ import org.junit.Test;
 import org.safehaus.jettyjam.utils.ContextListener;
 import org.safehaus.jettyjam.utils.FilterMapping;
 import org.safehaus.jettyjam.utils.JettyContext;
-import org.safehaus.jettyjam.utils.JettyResource;
+import org.safehaus.jettyjam.utils.JettyUnitResource;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,7 +42,7 @@ public class RestAppTest {
         }
     )
     @ClassRule
-    public static JettyResource service = new JettyResource();
+    public static JettyUnitResource service = new JettyUnitResource();
 
 
     @Test

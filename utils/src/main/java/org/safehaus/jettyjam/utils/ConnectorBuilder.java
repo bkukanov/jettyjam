@@ -29,8 +29,8 @@ public class ConnectorBuilder {
         for ( Field field : testClass.getDeclaredFields() ) {
             LOG.debug( "Looking at {} field of {} test class", field.getName(), testClass.getName() );
 
-            if ( JettyResource.class.isAssignableFrom( field.getType() ) ) {
-                LOG.debug( "Found JettyResource for {} field of {} test class", field.getName(), testClass.getName() );
+            if ( JettyUnitResource.class.isAssignableFrom( field.getType() ) ) {
+                LOG.debug( "Found JettyUnitResource for {} field of {} test class", field.getName(), testClass.getName() );
 
                 return field;
             }
@@ -43,7 +43,7 @@ public class ConnectorBuilder {
     public static ServerConnector setConnectors( Class testClass, Server server ) {
         Field jettyResource = getJettyResource( testClass );
         if ( jettyResource == null ) {
-            LOG.warn( "There's no JettyResource rule on class {} - using a default http connection.", testClass );
+            LOG.warn( "There's no JettyUnitResource rule on class {} - using a default http connection.", testClass );
             ServerConnector connector = new ServerConnector( server );
             connector.setPort( 0 );
             server.setConnectors( new ServerConnector[] { connector } );
@@ -52,7 +52,7 @@ public class ConnectorBuilder {
 
         JettyConnectors connectorsAnnotation = jettyResource.getAnnotation( JettyConnectors.class );
         if ( connectorsAnnotation == null ) {
-            LOG.warn( "There's no JettyConnectors annotation on JettyResource field of testClass {}" +
+            LOG.warn( "There's no JettyConnectors annotation on JettyUnitResource field of testClass {}" +
                     " - using default http connection", testClass );
             ServerConnector connector = new ServerConnector( server );
             connector.setPort( 0 );
