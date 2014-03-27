@@ -40,12 +40,10 @@ public class HttpsAppTest {
 
     @Test
     public void testHelloWorld() {
-        CertUtils.preparations( service.getHostname(), service.getPort() );
-        DefaultClientConfig clientConfig = new DefaultClientConfig();
-        Client client = Client.create( clientConfig );
-        String result = client
-                .resource( service.getServerUrl().toString() )
-                .path( "/" )
+        String result = service
+                .newTestParams()
+                .setEndpoint( "/" )
+                .newWebResource()
                 .accept( MediaType.TEXT_PLAIN )
                 .get( String.class );
 

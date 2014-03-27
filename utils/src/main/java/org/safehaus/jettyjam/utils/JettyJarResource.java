@@ -44,6 +44,7 @@ public class JettyJarResource implements TestRule {
     private String hostname;
     private URL serverUrl;
     private boolean secure = false;
+    private boolean started = false;
     private int port;
     private int debugPort = -1;
 
@@ -201,8 +202,10 @@ public class JettyJarResource implements TestRule {
         serverUrl = new URL( appProperties.getProperty( JettyRunner.SERVER_URL ) );
         secure = Boolean.parseBoolean( appProperties.getProperty( JettyRunner.IS_SECURE ) );
 
+        started = true;
+
         if ( secure ) {
-            CertUtils.preparations( hostname, port );
+            //CertUtils.preparations( hostname, port );
         }
     }
 
@@ -226,6 +229,8 @@ public class JettyJarResource implements TestRule {
 
 
     protected void after() throws Exception {
+        started = false;
+
         if ( pidFilePath != null ) {
             File pidFile = new File( pidFilePath );
             if ( pidFile.exists() && ! pidFile.delete() ) pidFile.deleteOnExit();
@@ -277,5 +282,19 @@ public class JettyJarResource implements TestRule {
 
     public boolean isSecure() {
         return secure;
+    }
+
+
+    public boolean isStarted() {
+        return started;
+    }
+
+
+    public TestParams newTestParams() {
+        if ( ! started ) {
+            throw new IllegalStateException( "This JettyJarResource not started." );
+        }
+
+        return new TestParams( this );
     }
 }

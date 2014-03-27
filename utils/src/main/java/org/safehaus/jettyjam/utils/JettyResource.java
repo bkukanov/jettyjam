@@ -68,7 +68,7 @@ public class JettyResource implements TestRule {
         if ( defaultConnector.getDefaultProtocol().contains( "SSL" ) ) {
             protocol = "https";
             secure = true;
-            CertUtils.preparations( hostname, port );
+            // CertUtils.preparations( hostname, port );
         }
 
         this.serverUrl = new URL( protocol, "localhost", port, "" );
@@ -118,5 +118,14 @@ public class JettyResource implements TestRule {
 
     public boolean isSecure() {
         return secure;
+    }
+
+
+    public TestParams newTestParams() {
+        if ( ! started ) {
+            throw new IllegalStateException( "This JettyResource not started." );
+        }
+
+        return new TestParams( this );
     }
 }
