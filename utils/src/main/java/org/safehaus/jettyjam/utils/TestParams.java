@@ -130,6 +130,33 @@ public class TestParams {
     }
 
 
+    /**
+     * Creates a new WebResource to operate against the JettyUnitResource that created this
+     * TestParam. The new WebResource has the resource, and path already set with a
+     * query parameter to signal that this is a test: {@link TestMode#TEST_MODE_PROPERTY}.
+     *
+     * @return a usable web resource
+     * @throws IllegalStateException if the endpoint is not set on this TestParam
+     * @see TestMode#TEST_MODE_PROPERTY
+     * @see JettyIntegResource
+     * @see JettyUnitResource
+     */
+    public WebResource newWebResource( TestMode mode ) {
+        if ( getEndpoint() == null ) {
+            throw new IllegalStateException( "Cannot get a web resource without setting the endpoint." );
+        }
+
+        if ( mode != null ) {
+            return Client.create()
+                         .resource( getServerUrl() )
+                         .path( getEndpoint() )
+                         .queryParam( TestMode.TEST_MODE_PROPERTY, mode.toString() );
+        }
+
+        return Client.create().resource( getServerUrl() ).path( getEndpoint() );
+    }
+
+
     public TestMode getMode() {
         return mode;
     }
