@@ -8,7 +8,7 @@ package org.safehaus.jettyjam.utils;
  * externally.
  */
 public enum TestMode {
-    INTEG, UNIT;
+    INTEG, UNIT, UNDEFINED;
 
     public static final String TEST_MODE_PROPERTY = "test.mode";
 }

@@ -35,7 +35,7 @@ public class JettyIntegResource implements JettyResource {
     private final String jarFilePath;
     private Process process;
     private PrintWriter out;
-    private BufferedReader in;
+    private BufferedReader inErr;
     private String pidFilePath;
     private Properties appProperties;
     private Properties systemProperties = new Properties();
@@ -160,21 +160,54 @@ public class JettyIntegResource implements JettyResource {
         process = Runtime.getRuntime().exec( execArgs );
 
         // the path to the pidFilePath will be output from the stderr stream
-        in = new BufferedReader( new InputStreamReader( process.getErrorStream() ) );
-        Thread t = new Thread( new Runnable() {
+        inErr = new BufferedReader( new InputStreamReader( process.getErrorStream() ) );
+        final BufferedReader inOut = new BufferedReader( new InputStreamReader( process.getInputStream() ) );
+
+        new Thread( new Runnable() {
             @Override
             public void run() {
-                try {
-                    while ( true ) {
-                        // this will block until we get an output line from stderr
-                        pidFilePath = in.readLine();
-
-                        if ( foundPidFile() ) {
-                            LOG.info( "Got pidFilePath {} from application CLI", pidFilePath );
+                String line;
+                while ( true ) {
+                    try {
+                        line = inOut.readLine();
+                        System.out.println( line );
+                    }
+                    catch ( IOException e ) {
+                        if ( e.getMessage().trim().equalsIgnoreCase( "Stream closed" ) ) {
+                            LOG.info( "External process output stream closed." );
                             return;
                         }
 
-                        LOG.info( "Application output: {}", pidFilePath );
+                        e.printStackTrace();
+                        LOG.info( "Exception causing stoppage of external process output printing." );
+                    }
+                }
+            }
+        } ).start();
+
+        Thread t = new Thread( new Runnable() {
+            @Override
+            public void run() {
+                String line;
+                boolean pidFileSet = false;
+
+                try {
+                    while ( true ) {
+                        // this will block until we get an output line from stderr
+                        line = inErr.readLine();
+
+                        if ( ! pidFileSet ) {
+                            pidFilePath = line;
+                        }
+
+                        if ( ! pidFileSet && foundPidFile() ) {
+                            pidFileSet = true;
+                            LOG.info( "Got pidFilePath {} from application CLI", pidFilePath );
+                            return;
+                        }
+                        else if ( pidFileSet ) {
+                            System.err.println( "Application stderr: " + line );
+                        }
                     }
                 }
                 catch ( IOException e ) {
@@ -222,7 +255,7 @@ public class JettyIntegResource implements JettyResource {
             out.flush();
 
             // wait until the thread above completes and we get the pidFilePath path
-            t.join( 1000 );
+            t.join( 500 );
         }
     }
 
