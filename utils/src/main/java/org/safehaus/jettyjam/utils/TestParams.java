@@ -1,6 +1,9 @@
 package org.safehaus.jettyjam.utils;
 
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,6 +24,7 @@ public class TestParams {
     private boolean secure;
     private Logger logger;
     private TestMode mode;
+    private Map<String, String> queryParams = new HashMap<String, String>();
 
 
     TestParams( JettyResource jettyResource ) {
@@ -107,6 +111,18 @@ public class TestParams {
     }
 
 
+    public TestParams setQueryParameters( Map<String,String> queryParams ) {
+        this.queryParams = queryParams;
+        return this;
+    }
+
+
+    public TestParams addQueryParameter( String param, String value ) {
+        this.queryParams.put( param, value );
+        return this;
+    }
+
+
     /**
      * Creates a new WebResource to operate against the JettyUnitResource that created this
      * TestParam. The new WebResource has the resource, and path already set with a
@@ -119,14 +135,7 @@ public class TestParams {
      * @see JettyUnitResource
      */
     public WebResource newWebResource() {
-        if ( getEndpoint() == null ) {
-            throw new IllegalStateException( "Cannot get a web resource without setting the endpoint." );
-        }
-
-        return Client.create()
-                     .resource( getServerUrl() )
-                     .path( getEndpoint() )
-                     .queryParam( TestMode.TEST_MODE_PROPERTY, getMode().toString() );
+        return newWebResource( getMode() );
     }
 
 
@@ -146,14 +155,18 @@ public class TestParams {
             throw new IllegalStateException( "Cannot get a web resource without setting the endpoint." );
         }
 
-        if ( mode != null ) {
-            return Client.create()
-                         .resource( getServerUrl() )
-                         .path( getEndpoint() )
-                         .queryParam( TestMode.TEST_MODE_PROPERTY, mode.toString() );
+
+        WebResource resource = Client.create().resource( getServerUrl() ).path( getEndpoint() );
+
+        for ( String param : queryParams.keySet() ) {
+            resource.queryParam( param, queryParams.get( param ) );
         }
 
-        return Client.create().resource( getServerUrl() ).path( getEndpoint() );
+        if ( mode != null ) {
+            return resource.queryParam( TestMode.TEST_MODE_PROPERTY, mode.toString() );
+        }
+
+        return resource;
     }
 
 
