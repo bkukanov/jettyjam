@@ -32,7 +32,9 @@ public class JettyIntegResource implements JettyResource {
     private static final Logger LOG = LoggerFactory.getLogger( JettyIntegResource.class );
 
     public static final String JAR_FILE_PATH_KEY = "jar.file.path";
+
     private final String jarFilePath;
+    private final Object lock = new Object();
     private Process process;
     private PrintWriter out;
     private BufferedReader inErr;
@@ -208,6 +210,7 @@ public class JettyIntegResource implements JettyResource {
                         if ( pidFilePath == null && foundPidFile( line ) ) {
                             pidFilePath = line;
                             LOG.info( "Got pidFilePath {} from application CLI", pidFilePath );
+                            synchronized ( lock ) { lock.notifyAll(); }
                         }
                         else {
                             System.err.println( line );
@@ -256,8 +259,10 @@ public class JettyIntegResource implements JettyResource {
             out.println( JettyRunner.PID_FILE );
             out.flush();
 
-            // wait until the thread above completes and we get the pidFilePath path
-            t.join( 500 );
+            // now block for a while until the app responds in thread above
+            synchronized ( lock ) {
+                lock.wait( 2000 );
+            }
         }
     }
 
