@@ -163,6 +163,11 @@ public class JettyIntegResource implements JettyResource {
         inErr = new BufferedReader( new InputStreamReader( process.getErrorStream() ) );
         final BufferedReader inOut = new BufferedReader( new InputStreamReader( process.getInputStream() ) );
 
+        /*
+         * ------------------------------------------------------------------------------------
+         * Thread reads from stdout of the external process and dumps to our stdout
+         * ------------------------------------------------------------------------------------
+         */
         new Thread( new Runnable() {
             @Override
             public void run() {
@@ -185,36 +190,33 @@ public class JettyIntegResource implements JettyResource {
             }
         } ).start();
 
+
+        /*
+         * ------------------------------------------------------------------------------------
+         * Thread reads from stderr of the external process and dumps to our stderr if and
+         * only if the output does not correspond to a pid file dump. Once the pid file is
+         * found it just continues reading and dumping.
+         * ------------------------------------------------------------------------------------
+         */
         Thread t = new Thread( new Runnable() {
             @Override
             public void run() {
                 String line;
-                boolean pidFileSet = false;
 
                 try {
-                    while ( true ) {
-                        // this will block until we get an output line from stderr
-                        line = inErr.readLine();
-
-                        if ( ! pidFileSet ) {
+                    while ( ( line = inErr.readLine() ) != null ) {
+                        if ( pidFilePath == null && foundPidFile( line ) ) {
                             pidFilePath = line;
-                        }
-
-                        if ( ! pidFileSet && foundPidFile() ) {
-                            pidFileSet = true;
                             LOG.info( "Got pidFilePath {} from application CLI", pidFilePath );
-                            return;
                         }
-                        else if ( pidFileSet ) {
-                            System.err.println( "Application stderr: " + line );
+                        else {
+                            System.err.println( line );
                         }
                     }
                 }
                 catch ( IOException e ) {
-                    LOG.error( "Failure while reading from standard input", e );
+                    LOG.error( "Failure while reading from stderr", e );
                 }
-
-                // once we get the pidFilePath output we exit - a one time thing!
             }
         });
         t.start();
@@ -242,13 +244,13 @@ public class JettyIntegResource implements JettyResource {
     }
 
 
-    private boolean foundPidFile() {
-        return pidFilePath != null && pidFilePath.startsWith( "/" ) && pidFilePath.endsWith( ".pid" );
+    private boolean foundPidFile( String line ) {
+        return line != null && line.startsWith( "/" ) && line.endsWith( ".pid" );
     }
 
 
     private void issuePidFileCommand( Thread t ) throws InterruptedException {
-        while ( ! foundPidFile() ) {
+        while ( ! foundPidFile( pidFilePath ) ) {
             // issue the command to get the pid file path from application
             out = new PrintWriter( process.getOutputStream() );
             out.println( JettyRunner.PID_FILE );
