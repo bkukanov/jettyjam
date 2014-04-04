@@ -171,7 +171,7 @@ public class TestParams {
         WebResource resource = Client.create().resource( getServerUrl() ).path( getEndpoint() );
 
         for ( String param : queryParams.keySet() ) {
-            resource.queryParam( param, queryParams.get( param ) );
+            resource = resource.queryParam( param, queryParams.get( param ) );
         }
 
         if ( mode != null ) {
