@@ -2,6 +2,7 @@ package org.safehaus.jettyjam.utils;
 
 
 import java.net.URL;
+import java.util.Map;
 
 import org.junit.rules.TestRule;
 
@@ -24,4 +25,6 @@ public interface JettyResource extends TestRule {
     boolean isSecure();
 
     TestParams newTestParams();
+
+    TestParams newTestParams( Map<String, String> queryParams );
 }

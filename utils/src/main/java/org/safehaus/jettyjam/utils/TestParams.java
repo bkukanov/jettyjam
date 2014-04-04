@@ -24,10 +24,22 @@ public class TestParams {
     private boolean secure;
     private Logger logger;
     private TestMode mode;
-    private Map<String, String> queryParams = new HashMap<String, String>();
+    private final Map<String, String> queryParams;
 
 
     TestParams( JettyResource jettyResource ) {
+        this( jettyResource, new HashMap<String, String>() );
+    }
+
+
+    TestParams( JettyResource jettyResource, Map<String,String> queryParams ) {
+        if ( queryParams == null ) {
+            this.queryParams = new HashMap<String, String>();
+        }
+        else {
+            this.queryParams = queryParams;
+        }
+
         setHostname( jettyResource.getHostname() )
                 .setPort( jettyResource.getPort() )
                 .setSecure( jettyResource.isSecure() )
@@ -111,8 +123,8 @@ public class TestParams {
     }
 
 
-    public TestParams setQueryParameters( Map<String,String> queryParams ) {
-        this.queryParams = queryParams;
+    public TestParams addQueryParameters( Map<String,String> queryParams ) {
+        this.queryParams.putAll( queryParams );
         return this;
     }
 

@@ -2,6 +2,7 @@ package org.safehaus.jettyjam.utils;
 
 
 import java.net.URL;
+import java.util.Map;
 
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
@@ -137,5 +138,15 @@ public class JettyUnitResource implements JettyResource {
         }
 
         return new TestParams( this );
+    }
+
+
+    @Override
+    public TestParams newTestParams( final Map<String, String> queryParams ) {
+        if ( ! started ) {
+            throw new IllegalStateException( "This JettyUnitResource not started." );
+        }
+
+        return new TestParams( this, queryParams );
     }
 }

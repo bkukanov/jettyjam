@@ -12,6 +12,7 @@ import java.io.PrintWriter;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 import org.junit.runner.Description;
@@ -335,6 +336,15 @@ public class JettyIntegResource implements JettyResource {
         }
 
         return new TestParams( this );
+    }
+
+
+    public TestParams newTestParams( Map<String,String> queryParams ) {
+        if ( ! started ) {
+            throw new IllegalStateException( "This JettyIntegResource not started." );
+        }
+
+        return new TestParams( this, queryParams );
     }
 
 
