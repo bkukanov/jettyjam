@@ -249,7 +249,7 @@ public class JettyIntegResource implements JettyResource {
 
 
     private boolean foundPidFile( String line ) {
-        return line != null && line.startsWith( "/" ) && line.endsWith( ".pid" );
+        return line != null && line.endsWith( ".pid" );
     }
 
 
