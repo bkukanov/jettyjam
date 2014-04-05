@@ -175,20 +175,19 @@ public class JettyIntegResource implements JettyResource {
             @Override
             public void run() {
                 String line;
-                while ( true ) {
-                    try {
-                        line = inOut.readLine();
-                        System.out.println( line );
+                try {
+                    while ( ( line = inOut.readLine() ) != null ) {
+                            System.out.println( line );
                     }
-                    catch ( IOException e ) {
-                        if ( e.getMessage().trim().equalsIgnoreCase( "Stream closed" ) ) {
-                            LOG.info( "External process output stream closed." );
-                            return;
-                        }
+                }
+                catch ( IOException e ) {
+                    if ( e.getMessage().trim().equalsIgnoreCase( "Stream closed" ) ) {
+                        LOG.info( "External process output stream closed." );
+                        return;
+                    }
 
-                        e.printStackTrace();
-                        LOG.info( "Exception causing stoppage of external process output printing." );
-                    }
+                    e.printStackTrace();
+                    LOG.info( "Exception causing stoppage of external process output printing." );
                 }
             }
         } ).start();
