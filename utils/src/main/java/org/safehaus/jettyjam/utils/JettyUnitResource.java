@@ -60,7 +60,8 @@ public class JettyUnitResource implements JettyResource {
      * specified by annotations on the JettyUnitResource? Maybe we can automatically
      * also generate a client that will hit the resource?
      */
-    protected void before() throws Throwable {
+    @Override
+    public void before() throws Exception {
         // Fire up the servlet with the handler
         server.start();
 
@@ -84,7 +85,8 @@ public class JettyUnitResource implements JettyResource {
     }
 
 
-    protected void after() {
+    @Override
+    public void after() {
         try {
             server.stop();
         }
@@ -148,5 +150,22 @@ public class JettyUnitResource implements JettyResource {
         }
 
         return new TestParams( this, queryParams );
+    }
+
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+
+        sb.append( getClass().getSimpleName() ).append( ":\n{" );
+        sb.append( "\n\tmode = " ).append( getMode() );
+        sb.append( "\n\thostname = " ).append( getHostname() );
+        sb.append( "\n\tport" ).append( getPort() );
+        sb.append( "\n\tserverUrl" ).append( getServerUrl() );
+        sb.append( "\n\tsecure" ).append( isSecure() );
+        sb.append( "\n\tstarted" ).append( isStarted() );
+        sb.append( "\n}" );
+
+        return sb.toString();
     }
 }

@@ -26,5 +26,9 @@ public interface JettyResource extends TestRule {
 
     TestParams newTestParams();
 
+    void after() throws Exception;
+
+    void before() throws Exception;
+
     TestParams newTestParams( Map<String, String> queryParams );
 }
