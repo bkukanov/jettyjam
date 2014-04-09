@@ -92,7 +92,7 @@ public class JettyUnitResource implements JettyResource {
                 }
 
                 Object obj;
-                if ( Modifier.isStatic( Modifier.fieldModifiers() ) ) {
+                if ( Modifier.isStatic( field.getModifiers() ) ) {
                     obj = field.get( null );
                 }
                 else {
