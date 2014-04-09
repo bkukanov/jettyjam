@@ -156,7 +156,7 @@ public class JettyIntegResource implements JettyResource {
 
 
     @Override
-    public void before() throws Exception {
+    public void start( Description description ) throws Exception {
         if ( started ) {
             return;
         }
@@ -323,9 +323,7 @@ public class JettyIntegResource implements JettyResource {
 
 
     @Override
-    public void after() throws Exception {
-        started = false;
-
+    public void stop( Description description ) throws Exception {
         if ( pidFilePath != null ) {
             File pidFile = new File( pidFilePath );
             if ( pidFile.exists() && ! pidFile.delete() ) pidFile.deleteOnExit();
@@ -335,25 +333,22 @@ public class JettyIntegResource implements JettyResource {
         out.flush();
         out.close();
         process.destroy();
+
+        started = false;
     }
 
 
     @Override
     public Statement apply( final Statement base, final Description description ) {
-        return statement( base );
-    }
-
-
-    private Statement statement( final Statement base ) {
         return new Statement() {
             @Override
             public void evaluate() throws Throwable {
-                before();
+                start( description );
                 try {
                     base.evaluate();
                 }
                 finally {
-                    after();
+                    stop( description );
                 }
             }
         };

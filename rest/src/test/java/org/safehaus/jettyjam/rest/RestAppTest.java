@@ -42,7 +42,7 @@ public class RestAppTest {
         }
     )
     @ClassRule
-    public static JettyUnitResource service = new JettyUnitResource();
+    public static JettyUnitResource service = new JettyUnitResource( RestAppTest.class );
 
 
     @Test

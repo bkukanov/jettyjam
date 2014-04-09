@@ -26,7 +26,7 @@ public class SimpleAppTest {
         }
     )
     @Rule
-    public JettyUnitResource service = new JettyUnitResource();
+    public JettyUnitResource service = new JettyUnitResource( this );
 
 
     @Test

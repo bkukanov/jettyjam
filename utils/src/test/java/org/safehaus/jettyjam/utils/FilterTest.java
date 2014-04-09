@@ -24,7 +24,7 @@ public class FilterTest {
         }
     )
     @Rule
-    public JettyResource service = new JettyUnitResource();
+    public JettyResource service = new JettyUnitResource( this );
 
 
     @Test

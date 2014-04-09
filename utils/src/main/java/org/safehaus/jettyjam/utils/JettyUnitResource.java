@@ -1,6 +1,8 @@
 package org.safehaus.jettyjam.utils;
 
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.net.URL;
 import java.util.Map;
 
@@ -15,13 +17,97 @@ import org.slf4j.LoggerFactory;
 /** A Jetty ExternalResource for this project. */
 public class JettyUnitResource implements JettyResource {
     private static final Logger LOG = LoggerFactory.getLogger( JettyUnitResource.class );
+
     private final Server server = new Server();
+    private final Object testInstance;
+    private final Class testClass;
+
+    private Field testField;
     private ServerConnector defaultConnector;
     private URL serverUrl;
     private int port;
     private boolean secure;
     private boolean started;
     private String hostname;
+
+
+    /**
+     * For static members in a test class usually used with @ClassRule annotation.
+     */
+    public JettyUnitResource( Class testClass ) {
+        this.testInstance = null;
+        this.testClass = testClass;
+    }
+
+
+    /**
+     * For non-static test class member which requires the test class instance.
+     *
+     * @param testInstance the test class instance
+     */
+    public JettyUnitResource( Object testInstance ) {
+        if ( testInstance == null ) {
+            throw new NullPointerException( "testInstance cannot be null." );
+        }
+
+        if ( testInstance instanceof Class ) {
+            throw new IllegalStateException( "testInstance should not be a Class" );
+        }
+
+        this.testInstance = testInstance;
+        this.testClass = testInstance.getClass();
+    }
+
+
+    private void prepare() {
+        try {
+            findFieldInTest();
+        }
+        catch ( IllegalAccessException e ) {
+            throw new IllegalStateException( "Access modifier must be public." );
+        }
+
+        defaultConnector = ConnectorBuilder.setConnectors( testField, server );
+        HandlerBuilder builder = new HandlerBuilder();
+        server.setHandler( builder.build( testClass, server ) );
+    }
+
+
+    private void findFieldInTest() throws IllegalAccessException {
+        for ( Field field : testClass.getDeclaredFields() ) {
+            LOG.debug( "Looking at {} field of {} test class", field.getName(), testClass );
+
+            if ( JettyResource.class.isAssignableFrom( field.getType() ) ) {
+                LOG.debug( "Found JettyResource for {} field of {} test class", field.getName(), testClass );
+                field.setAccessible( true );
+
+                if ( testInstance == null && ! Modifier.isStatic( field.getModifiers() ) ) {
+                    throw new IllegalStateException( "A test object instance constructor argument must be provided, " +
+                            "for a non-static " + JettyUnitResource.class + " member." );
+                }
+
+                if ( testInstance != null && Modifier.isStatic( field.getModifiers() ) ) {
+                    throw new IllegalStateException( "The Class constructor argument for the test must be provided, " +
+                            "for static " + JettyUnitResource.class + " members." );
+                }
+
+                Object obj;
+                if ( Modifier.isStatic( Modifier.fieldModifiers() ) ) {
+                    obj = field.get( null );
+                }
+                else {
+                    obj = field.get( testInstance );
+                }
+
+                if ( obj == null ) {
+                    String msg = "Field " + field.getName() + " in test class " + testClass + " is null.";
+                    LOG.error( msg );
+                    throw new RuntimeException( msg );
+                }
+
+            }
+        }
+    }
 
 
     @SuppressWarnings( "UnusedDeclaration" )
@@ -61,7 +147,14 @@ public class JettyUnitResource implements JettyResource {
      * also generate a client that will hit the resource?
      */
     @Override
-    public void before() throws Exception {
+    public void start( Description description ) throws Exception {
+        prepare();
+
+        if ( defaultConnector == null ) {
+            throw new NullPointerException( "The defaultConnector cannot be null. Check that "
+              + "the proper annotations have been applied to the resource to configure Jetty." );
+        }
+
         // Fire up the servlet with the handler
         server.start();
 
@@ -86,9 +179,10 @@ public class JettyUnitResource implements JettyResource {
 
 
     @Override
-    public void after() {
+    public void stop( Description description ) {
         try {
             server.stop();
+            started = false;
         }
         catch ( Exception e ) {
             LOG.error( "Failed to stop the server.", e );
@@ -97,24 +191,16 @@ public class JettyUnitResource implements JettyResource {
 
 
     @Override
-    public Statement apply( Statement base, Description description ) {
-        defaultConnector = ConnectorBuilder.setConnectors( description.getTestClass(), server );
-        HandlerBuilder builder = new HandlerBuilder();
-        server.setHandler( builder.build( description.getTestClass(), server ) );
-        return statement( base );
-    }
-
-
-    private Statement statement( final Statement base ) {
+    public Statement apply( final Statement base, final Description description ) {
         return new Statement() {
             @Override
             public void evaluate() throws Throwable {
-                before();
+                start( description );
                 try {
                     base.evaluate();
                 }
                 finally {
-                    after();
+                    stop( description );
                 }
             }
         };
@@ -160,10 +246,10 @@ public class JettyUnitResource implements JettyResource {
         sb.append( getClass().getSimpleName() ).append( ":\n{" );
         sb.append( "\n\tmode = " ).append( getMode() );
         sb.append( "\n\thostname = " ).append( getHostname() );
-        sb.append( "\n\tport" ).append( getPort() );
-        sb.append( "\n\tserverUrl" ).append( getServerUrl() );
-        sb.append( "\n\tsecure" ).append( isSecure() );
-        sb.append( "\n\tstarted" ).append( isStarted() );
+        sb.append( "\n\tport = " ).append( getPort() );
+        sb.append( "\n\tserverUrl = " ).append( getServerUrl() );
+        sb.append( "\n\tsecure = " ).append( isSecure() );
+        sb.append( "\n\tstarted = " ).append( isStarted() );
         sb.append( "\n}" );
 
         return sb.toString();

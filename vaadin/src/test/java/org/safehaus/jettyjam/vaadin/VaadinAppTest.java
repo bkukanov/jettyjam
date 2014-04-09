@@ -41,7 +41,7 @@ public class VaadinAppTest {
         }
     )
     @ClassRule
-    public static JettyUnitResource service = new JettyUnitResource();
+    public static JettyUnitResource service = new JettyUnitResource( VaadinAppTest.class );
 
 
     @Test

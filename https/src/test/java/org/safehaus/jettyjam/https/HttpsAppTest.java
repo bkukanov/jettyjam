@@ -31,7 +31,7 @@ public class HttpsAppTest {
         httpsConnectors = { @HttpsConnector( id = "https" ) }
     )
     @Rule
-    public JettyUnitResource service = new JettyUnitResource();
+    public JettyUnitResource service = new JettyUnitResource( this );
 
 
     @Test

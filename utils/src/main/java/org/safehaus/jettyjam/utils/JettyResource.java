@@ -5,30 +5,24 @@ import java.net.URL;
 import java.util.Map;
 
 import org.junit.rules.TestRule;
+import org.junit.runner.Description;
 
 
 /**
  * A common interface across the JettyUnitResource and the JettyIntegResource.
  */
-public interface JettyResource extends TestRule {
+public interface JettyResource extends StartableResource {
     int getPort();
 
     URL getServerUrl();
 
     TestMode getMode();
 
-    @SuppressWarnings( "UnusedDeclaration" )
-    boolean isStarted();
-
     String getHostname();
 
     boolean isSecure();
 
     TestParams newTestParams();
-
-    void after() throws Exception;
-
-    void before() throws Exception;
 
     TestParams newTestParams( Map<String, String> queryParams );
 }
