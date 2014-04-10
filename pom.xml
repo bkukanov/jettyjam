@@ -29,7 +29,23 @@
       <id>akarasulu</id>
       <name>Alex Karasulu</name>
     </developer>
-  </developers>
+    <developer>
+      <id>aasanaliev</id>
+      <name>Askhat Asanaliev</name>
+    </developer>
+    <developer>
+      <id>bicak.cs</id>
+      <name>Furkan Bicak</name>
+    </developer>
+    <developer>
+      <id>salihkardan</id>
+      <name>Salih Kardan</name>
+    </developer>
+    <developer>
+      <id>yigits</id>
+      <name>Yigit Sapli</name>
+    </developer>
+</developers>
 
   <scm>
     <url>http://stash.safehaus.org/projects/JETTYJAM/repos/main/browse</url>
