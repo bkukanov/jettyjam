@@ -4,7 +4,10 @@ package org.safehaus.jettyjam.utils;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.net.URL;
+import java.util.List;
 import java.util.Map;
+
+import javax.servlet.ServletContextListener;
 
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
@@ -15,7 +18,7 @@ import org.slf4j.LoggerFactory;
 
 
 /** A Jetty ExternalResource for this project. */
-public class JettyUnitResource implements JettyResource {
+public class JettyUnitResource<CL extends ServletContextListener> implements JettyResource {
     private static final Logger LOG = LoggerFactory.getLogger( JettyUnitResource.class );
 
     private final Server server = new Server();
@@ -29,6 +32,7 @@ public class JettyUnitResource implements JettyResource {
     private boolean secure;
     private boolean started;
     private String hostname;
+    private HandlerBuilder<CL> handlerBuilder = new HandlerBuilder<CL>();
 
 
     /**
@@ -61,19 +65,29 @@ public class JettyUnitResource implements JettyResource {
 
     private void prepare() {
         try {
-            findFieldInTest();
+            testField = findFieldInTest();
         }
         catch ( IllegalAccessException e ) {
             throw new IllegalStateException( "Access modifier must be public." );
         }
 
+        if ( testField == null ) {
+            throw new RuntimeException( "Could not bind the testField" );
+        }
+
         defaultConnector = ConnectorBuilder.setConnectors( testField, server );
-        HandlerBuilder builder = new HandlerBuilder();
-        server.setHandler( builder.build( testClass, server ) );
+        handlerBuilder = new HandlerBuilder<CL>();
+        server.setHandler( handlerBuilder.build( testClass, server ) );
     }
 
 
-    private void findFieldInTest() throws IllegalAccessException {
+    /**
+     * Finds the JettyResource field (static or non-static) who's value is equal to this JettyUnitResource.
+     *
+     * @return the field in the testClass for this JettyUnitResource
+     * @throws IllegalAccessException if there are access modifier issues
+     */
+    private Field findFieldInTest() throws IllegalAccessException {
         for ( Field field : testClass.getDeclaredFields() ) {
             LOG.debug( "Looking at {} field of {} test class", field.getName(), testClass );
 
@@ -105,8 +119,23 @@ public class JettyUnitResource implements JettyResource {
                     throw new RuntimeException( msg );
                 }
 
+                if ( obj == this ) {
+                    return field;
+                }
             }
         }
+
+        return null;
+    }
+
+
+    public CL getFirstContextListener() {
+        return handlerBuilder.getFirstContextListener();
+    }
+
+
+    public List<CL> getContextListeners() {
+        return handlerBuilder.getContextListeners();
     }
 
 

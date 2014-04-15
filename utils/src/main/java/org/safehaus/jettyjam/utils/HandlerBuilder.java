@@ -2,9 +2,13 @@ package org.safehaus.jettyjam.utils;
 
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.EnumSet;
+import java.util.List;
 
 import javax.servlet.DispatcherType;
+import javax.servlet.ServletContextListener;
 
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.session.SessionHandler;
@@ -18,8 +22,21 @@ import org.slf4j.LoggerFactory;
 /**
  * Builds Jetty JettyContext based on annotations.
  */
-public class HandlerBuilder {
+public class HandlerBuilder<CL extends ServletContextListener> {
     private static final Logger LOG = LoggerFactory.getLogger( HandlerBuilder.class );
+
+    private CL firstListener;
+    private List<CL> listeners = new ArrayList<CL>();
+
+
+    public CL getFirstContextListener() {
+        return firstListener;
+    }
+
+
+    public List<CL> getContextListeners() {
+        return Collections.unmodifiableList( listeners );
+    }
 
 
     /**
@@ -30,7 +47,7 @@ public class HandlerBuilder {
      * @return the handler collection
      */
     public ServletContextHandler buildForLauncher( String className, Server server ) {
-        Class launcherClass = null;
+        Class launcherClass;
 
         try {
             launcherClass = Class.forName( className );
@@ -75,7 +92,7 @@ public class HandlerBuilder {
     }
 
 
-    public ServletContextHandler build( JettyContext contextAnnotation, Server server) {
+    private ServletContextHandler build( JettyContext contextAnnotation, Server server) {
         ServletContextHandler handler = new ServletContextHandler( server, contextAnnotation.contextRoot() );
 
         if ( contextAnnotation.servletMappings().length == 0 ) {
@@ -93,11 +110,18 @@ public class HandlerBuilder {
 
         for ( ContextListener contextListener : contextAnnotation.contextListeners() ) {
             try {
-                handler.addEventListener( contextListener.listener().newInstance() );
+                //noinspection unchecked
+                CL listener = ( CL ) contextListener.listener().newInstance();
+
+                if ( firstListener == null ) {
+                    firstListener = listener;
+                }
+                listeners.add( listener );
+
+                handler.addEventListener( listener );
             }
             catch ( Exception e ) {
-                throw new RuntimeException( "Failed to instantiate listener: "
-                        + contextListener.listener(), e );
+                throw new RuntimeException( "Failed to instantiate listener: " + contextListener.listener(), e );
             }
         }
 
@@ -109,7 +133,7 @@ public class HandlerBuilder {
     }
 
 
-    Field getJettyResource( Class testClass ) {
+    private Field getJettyResource( Class testClass ) {
         for ( Field field : testClass.getDeclaredFields() ) {
             LOG.debug( "Looking at {} field of {} test class", field.getName(), testClass.getName() );
 
