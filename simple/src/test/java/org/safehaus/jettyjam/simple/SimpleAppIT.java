@@ -24,7 +24,7 @@ public class SimpleAppIT {
 
 
     @Rule
-    public JettyIntegResource app = new JettyIntegResource();
+    public JettyIntegResource app = new JettyIntegResource( SimpleAppIT.class );
 
     @Test
     public void testEmbeddedApp() throws Exception {

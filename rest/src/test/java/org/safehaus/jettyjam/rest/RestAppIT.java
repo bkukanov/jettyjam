@@ -21,7 +21,6 @@ import com.sun.jersey.multipart.FormDataBodyPart;
 import com.sun.jersey.multipart.FormDataMultiPart;
 
 import static junit.framework.TestCase.assertEquals;
-import static junit.framework.TestCase.assertTrue;
 
 
 /**
@@ -32,7 +31,7 @@ public class RestAppIT {
 
 
     @ClassRule
-    public static JettyIntegResource app = new JettyIntegResource();
+    public static JettyIntegResource app = new JettyIntegResource( RestAppIT.class );
 
 
     @Test

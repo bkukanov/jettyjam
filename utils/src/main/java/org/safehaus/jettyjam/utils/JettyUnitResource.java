@@ -1,37 +1,26 @@
 package org.safehaus.jettyjam.utils;
 
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
 import java.net.URL;
 import java.util.List;
-import java.util.Map;
 
 import javax.servlet.ServletContextListener;
 
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
 import org.junit.runner.Description;
-import org.junit.runners.model.Statement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
 /** A Jetty ExternalResource for this project. */
-public class JettyUnitResource<CL extends ServletContextListener> implements JettyResource {
+public class JettyUnitResource<CL extends ServletContextListener> extends AbstractJettyResource {
     private static final Logger LOG = LoggerFactory.getLogger( JettyUnitResource.class );
 
     private final Server server = new Server();
-    private final Object testInstance;
-    private final Class testClass;
 
-    private Field testField;
+    private String name = "unset";
     private ServerConnector defaultConnector;
-    private URL serverUrl;
-    private int port;
-    private boolean secure;
-    private boolean started;
-    private String hostname;
     private HandlerBuilder<CL> handlerBuilder = new HandlerBuilder<CL>();
 
 
@@ -39,8 +28,7 @@ public class JettyUnitResource<CL extends ServletContextListener> implements Jet
      * For static members in a test class usually used with @ClassRule annotation.
      */
     public JettyUnitResource( Class testClass ) {
-        this.testInstance = null;
-        this.testClass = testClass;
+        super( testClass, TestMode.UNIT );
     }
 
 
@@ -50,82 +38,35 @@ public class JettyUnitResource<CL extends ServletContextListener> implements Jet
      * @param testInstance the test class instance
      */
     public JettyUnitResource( Object testInstance ) {
-        if ( testInstance == null ) {
-            throw new NullPointerException( "testInstance cannot be null." );
-        }
-
-        if ( testInstance instanceof Class ) {
-            throw new IllegalStateException( "testInstance should not be a Class" );
-        }
-
-        this.testInstance = testInstance;
-        this.testClass = testInstance.getClass();
-    }
-
-
-    private void prepare() {
-        try {
-            testField = findFieldInTest();
-        }
-        catch ( IllegalAccessException e ) {
-            throw new IllegalStateException( "Access modifier must be public." );
-        }
-
-        if ( testField == null ) {
-            throw new RuntimeException( "Could not bind the testField" );
-        }
-
-        defaultConnector = ConnectorBuilder.setConnectors( testField, server );
-        handlerBuilder = new HandlerBuilder<CL>();
-        server.setHandler( handlerBuilder.build( testClass, server ) );
+        super( testInstance, TestMode.UNIT );
     }
 
 
     /**
-     * Finds the JettyResource field (static or non-static) who's value is equal to this JettyUnitResource.
-     *
-     * @return the field in the testClass for this JettyUnitResource
-     * @throws IllegalAccessException if there are access modifier issues
+     * For static members in a test class usually used with @ClassRule annotation.
      */
-    private Field findFieldInTest() throws IllegalAccessException {
-        for ( Field field : testClass.getDeclaredFields() ) {
-            LOG.debug( "Looking at {} field of {} test class", field.getName(), testClass );
+    public JettyUnitResource( Class testClass, String name ) {
+        super( testClass, TestMode.UNIT );
+        this.name = name;
+    }
 
-            if ( JettyResource.class.isAssignableFrom( field.getType() ) ) {
-                LOG.debug( "Found JettyResource for {} field of {} test class", field.getName(), testClass );
-                field.setAccessible( true );
 
-                if ( testInstance == null && ! Modifier.isStatic( field.getModifiers() ) ) {
-                    throw new IllegalStateException( "A test object instance constructor argument must be provided, " +
-                            "for a non-static " + JettyUnitResource.class + " member." );
-                }
+    /**
+     * For non-static test class member which requires the test class instance.
+     *
+     * @param testInstance the test class instance
+     */
+    public JettyUnitResource( Object testInstance, String name ) {
+        super( testInstance, TestMode.UNIT );
+        this.name = name;
+    }
 
-                if ( testInstance != null && Modifier.isStatic( field.getModifiers() ) ) {
-                    throw new IllegalStateException( "The Class constructor argument for the test must be provided, " +
-                            "for static " + JettyUnitResource.class + " members." );
-                }
 
-                Object obj;
-                if ( Modifier.isStatic( field.getModifiers() ) ) {
-                    obj = field.get( null );
-                }
-                else {
-                    obj = field.get( testInstance );
-                }
-
-                if ( obj == null ) {
-                    String msg = "Field " + field.getName() + " in test class " + testClass + " is null.";
-                    LOG.error( msg );
-                    throw new RuntimeException( msg );
-                }
-
-                if ( obj == this ) {
-                    return field;
-                }
-            }
-        }
-
-        return null;
+    protected void prepare() {
+        super.prepare();
+        defaultConnector = ConnectorBuilder.setConnectors( getTestField(), server );
+        handlerBuilder = new HandlerBuilder<CL>();
+        server.setHandler( handlerBuilder.build( testClass, getTestField(), server ) );
     }
 
 
@@ -145,30 +86,6 @@ public class JettyUnitResource<CL extends ServletContextListener> implements Jet
     }
 
 
-    @Override
-    public int getPort() {
-        return port;
-    }
-
-
-    @Override
-    public URL getServerUrl() {
-        return serverUrl;
-    }
-
-
-    @Override
-    @SuppressWarnings( "UnusedDeclaration" )
-    public boolean isStarted() {
-        return started;
-    }
-
-
-    public TestMode getMode() {
-        return TestMode.UNIT;
-    }
-
-
     /*
      * The URL should be the the base of the server. There might however also
      * be a set of URLs for mappings? Mappings to one or more applications
@@ -177,7 +94,7 @@ public class JettyUnitResource<CL extends ServletContextListener> implements Jet
      */
     @Override
     public void start( Description description ) throws Exception {
-        prepare();
+        super.start( description );
 
         if ( defaultConnector == null ) {
             throw new NullPointerException( "The defaultConnector cannot be null. Check that "
@@ -216,55 +133,6 @@ public class JettyUnitResource<CL extends ServletContextListener> implements Jet
         catch ( Exception e ) {
             LOG.error( "Failed to stop the server.", e );
         }
-    }
-
-
-    @Override
-    public Statement apply( final Statement base, final Description description ) {
-        return new Statement() {
-            @Override
-            public void evaluate() throws Throwable {
-                start( description );
-                try {
-                    base.evaluate();
-                }
-                finally {
-                    stop( description );
-                }
-            }
-        };
-    }
-
-
-    @Override
-    public String getHostname() {
-        return hostname;
-    }
-
-
-    @Override
-    public boolean isSecure() {
-        return secure;
-    }
-
-
-    @Override
-    public TestParams newTestParams() {
-        if ( ! started ) {
-            throw new IllegalStateException( "This JettyUnitResource not started." );
-        }
-
-        return new TestParams( this );
-    }
-
-
-    @Override
-    public TestParams newTestParams( final Map<String, String> queryParams ) {
-        if ( ! started ) {
-            throw new IllegalStateException( "This JettyUnitResource not started." );
-        }
-
-        return new TestParams( this, queryParams );
     }
 
 

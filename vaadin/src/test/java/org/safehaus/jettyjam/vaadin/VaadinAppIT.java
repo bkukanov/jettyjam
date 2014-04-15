@@ -29,7 +29,7 @@ public class VaadinAppIT {
 
 
     @ClassRule
-    public static JettyIntegResource app = new JettyIntegResource();
+    public static JettyIntegResource app = new JettyIntegResource( VaadinAppIT.class );
 
     @Test
     public void testEmbeddedApp() throws Exception {

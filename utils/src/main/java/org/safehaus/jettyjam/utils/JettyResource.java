@@ -1,6 +1,7 @@
 package org.safehaus.jettyjam.utils;
 
 
+import java.lang.reflect.Field;
 import java.net.URL;
 import java.util.Map;
 
@@ -19,6 +20,8 @@ public interface JettyResource extends StartableResource {
     TestMode getMode();
 
     String getHostname();
+
+    Field getTestField();
 
     boolean isSecure();
 

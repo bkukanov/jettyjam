@@ -71,6 +71,7 @@ public class StartResources implements StartableResource {
             try {
                 LOG.info( "Test class {}: stopping resource {}", description.getTestClass().getName(), resource );
                 resource.stop( description );
+                Thread.sleep( delay );
             }
             catch ( Exception e ) {
                 throwException = true;
