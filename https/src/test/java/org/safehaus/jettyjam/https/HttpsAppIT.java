@@ -21,7 +21,7 @@ public class HttpsAppIT {
 
 
     @Rule
-    public JettyIntegResource app = new JettyIntegResource( HttpsAppIT.class );
+    public JettyIntegResource app = new JettyIntegResource( this );
 
     @Test
     public void testHelloWorld() throws Exception {
