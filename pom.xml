@@ -55,7 +55,6 @@
     <developerConnection>
       scm:git:ssh://git@stash.safehaus.org:7999/jettyjam/main.git
     </developerConnection>
-    <tag>HEAD</tag>
   </scm>
 
   <properties>
