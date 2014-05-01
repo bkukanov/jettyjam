@@ -45,15 +45,15 @@
       <id>yigits</id>
       <name>Yigit Sapli</name>
     </developer>
-</developers>
+  </developers>
 
   <scm>
     <url>http://stash.safehaus.org/projects/JETTYJAM/repos/main/browse</url>
     <connection>
-      scm:git:http://stash.safehaus.org/scm/JETTYJAM/main.git
+      scm:git:ssh://git@stash.safehaus.org:7999/jettyjam/main.git
     </connection>
     <developerConnection>
-scm:git:http://${safehaus.git.username}@stash.safehaus.org/scm/JETTYJAM/main.git
+      scm:git:ssh://git@stash.safehaus.org:7999/jettyjam/main.git
     </developerConnection>
     <tag>HEAD</tag>
   </scm>
