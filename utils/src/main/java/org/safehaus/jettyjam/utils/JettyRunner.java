@@ -210,6 +210,11 @@ public abstract class JettyRunner {
     }
 
 
+    public boolean isStarted() {
+        return started;
+    }
+
+
     public String getHostname() {
         return hostname;
     }
