@@ -33,6 +33,7 @@ public abstract class JettyRunner {
     public static final String IS_SECURE = "isSecure";
     public static final String PID = "pid";
 
+    private final Object lock = new Object();
     private final Server server;
     private URL serverUrl;
     private int port;
@@ -54,53 +55,56 @@ public abstract class JettyRunner {
 
 
     protected void start() throws Exception {
-        ServerConnector defaultConnector = ConnectorBuilder.setConnectors( getSubClass(), server );
+        synchronized ( lock ) {
+            ServerConnector defaultConnector = ConnectorBuilder.setConnectors( getSubClass(), server );
 
-        if ( defaultConnector.getHost() == null ) {
-            hostname = "localhost";
-        }
-
-        HandlerBuilder handlerBuilder = new HandlerBuilder();
-        server.setHandler( handlerBuilder.buildForLauncher( getSubClass(), server ) );
-        server.start();
-
-        this.port = defaultConnector.getLocalPort();
-        String protocol = "http";
-        if ( defaultConnector.getDefaultProtocol().contains( "SSL" ) ) {
-            protocol = "https";
-            secure = true;
-        }
-        this.serverUrl = new URL( protocol, hostname, port, "" );
-
-        setupPidFile();
-
-        Runtime.getRuntime().addShutdownHook( new Thread( new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    JettyRunner.this.stop();
-                }
-                catch ( Exception e ) {
-                    LOG.error( "Failed to stop jetty server in JVM shutdown hook.", e );
-                }
+            if ( defaultConnector.getHost() == null ) {
+                hostname = "localhost";
             }
-        } ) );
 
-        timer.scheduleAtFixedRate( new TimerTask() {
-            @Override
-            public void run() {
-                if ( !pidFile.exists() ) {
+            HandlerBuilder handlerBuilder = new HandlerBuilder();
+            server.setHandler( handlerBuilder.buildForLauncher( getSubClass(), server ) );
+            server.start();
+
+            this.port = defaultConnector.getLocalPort();
+            String protocol = "http";
+            if ( defaultConnector.getDefaultProtocol().contains( "SSL" ) ) {
+                protocol = "https";
+                secure = true;
+            }
+            this.serverUrl = new URL( protocol, hostname, port, "" );
+
+            setupPidFile();
+
+            Runtime.getRuntime().addShutdownHook( new Thread( new Runnable() {
+                @Override
+                public void run() {
                     try {
                         JettyRunner.this.stop();
                     }
                     catch ( Exception e ) {
-                        LOG.error( "Failed to stop jetty server after pidFile removal", e );
+                        LOG.error( "Failed to stop jetty server in JVM shutdown hook.", e );
                     }
                 }
-            }
-        }, 200, 200 ); // @todo make these configurable command line options (archaius?)
+            } ) );
 
-        started = true;
+            timer.scheduleAtFixedRate( new TimerTask() {
+                @Override
+                public void run() {
+                    if ( !pidFile.exists() ) {
+                        try {
+                            JettyRunner.this.stop();
+                        }
+                        catch ( Exception e ) {
+                            LOG.error( "Failed to stop jetty server after pidFile removal", e );
+                        }
+                    }
+                }
+            }, 200, 200 ); // @todo make these configurable command line options (archaius?)
+
+            started = true;
+            lock.notifyAll();
+        }
 
         new Thread( new Runnable() {
             @Override
@@ -211,6 +215,31 @@ public abstract class JettyRunner {
 
 
     public boolean isStarted() {
+        return started;
+    }
+
+
+    /**
+     * Blocks the calling thread until time millis or until the thread of notified of
+     * the start.
+     *
+     * @param millis the time to wait for the start
+     * @return whether or not this runner has started
+     */
+    public boolean isStarted( long millis ) {
+        synchronized ( lock ) {
+            if ( started ) {
+                return true;
+            }
+
+            try {
+                lock.wait( millis );
+            }
+            catch ( InterruptedException e ) {
+                LOG.warn( "Awe snap, someone just woke me up early!" );
+            }
+        }
+
         return started;
     }
 
